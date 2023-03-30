@@ -1,0 +1,23 @@
+ 
+
+if cummulative_flow_of_sta < x  (SLCI based allocation)
+    %choose one link and allocate all flows of STA to it 
+else
+    for each flow of that sta 
+        if flow < x   (SLCI based allocation)
+            %choose one link and allocate all flows of STA to it
+        else 
+            %divide flow into multiple links
+        end
+    end
+end
+
+i)How to choose the link?
+ii)How to divide the flows?
+
+->Which link offers chances of getting aggregated faster and hence transmitting faster?
+This depends upon 
+i)Queue size at each link
+ii)No of packets of particular STA on each link (aggregation)
+iii)Link Congestion/Channel Occupancy, which queue has smaller backoff
+iv)BW, Rate

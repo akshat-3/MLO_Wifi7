@@ -1,0 +1,10 @@
+%Max time at which client received packet
+x=[160.55, 169.50, 163.65, 161.776, 162.552, 164.29, 162.43];​
+yticks(0:20:200);
+bar(x);
+xlabel('Configuration');
+ylabel('Last packet received by client at time (seconds)','fontweight','bold','FontSize',20);
+legend('No-OFDMA', '2xRU-242', '4xRU-106','8xRU-52', '18xRU-26','4xRU-106+2xRU-26','8xRU-52+2xRU-26','FontSize',16);
+%title('Aggregate Throughput','FontSize',16);
+​
+​

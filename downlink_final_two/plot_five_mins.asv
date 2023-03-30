@@ -1,0 +1,54 @@
+figure(1);
+Y = [62.04, 62.09, 61.98, 0, 0];
+bar(Y);
+xlabel({'Algorithm', '(Mbps)'});
+ylabel({'Total Throughput', '(Mbps)'});
+yticks(0:50:550);
+title('Multi-link NSTR Operation');
+legend( 'MRBCA','MLSA Dynamic', 'SLCI', 'MLSA', 'MCAA');
+
+figure(2);
+Y =[34.51, 35.87, 22.86, 0, 0];
+bar(Y);
+xlabel({'Algorithm', '(Mbps)'});
+ylabel({'Throughput Interface One', '(Mbps)'});
+yticks(0:50:550);
+title('Multi-link NSTR Operation');
+legend( 'MRBCA','MLSA Dynamic', 'SLCI', 'MLSA', 'MCAA');
+
+figure(3);
+Y = [27.53, 52.43, 51.59, 52.20, 51.06; 97.68, 182.44, 197.77, 212.658, 225.41;];
+bar(Y);
+xlabel({'Algorithm', '(Mbps)'});
+ylabel({'Throughput Interface Two', '(Mbps)'});
+yticks(0:50:550);
+title('Multi-link NSTR Operation');
+legend( 'MRBCA','MLSA Dynamic', 'SLCI', 'MLSA', 'MCAA');
+
+figure(4);
+Y = [48.04, 50.02, 33.05, 0, 0];
+bar(Y);
+xlabel({'Algorithm', '(Mbps)'});
+ylabel({'%Time AP occupies channel ((ap tx time/total time)%) Interface One', '(Mbps)'});
+yticks(0:50:550);
+title('Multi-link NSTR Operation');
+legend( 'MRBCA','MLSA Dynamic', 'SLCI', 'MLSA', 'MCAA');
+
+figure(5);
+Y = [52.68, 52.43, 51.59, 52.20, 51.06; 97.68, 182.44, 197.77, 212.658, 225.41;];
+bar(Y);
+xlabel({'Algorithm', '(Mbps)'});
+ylabel({'%Time AP occupies channel ((ap tx time/total time)%) Interface Two', '(Mbps)'});
+yticks(0:50:550);
+title('Multi-link NSTR Operation');
+legend( 'MRBCA','MLSA Dynamic', 'SLCI', 'MLSA', 'MCAA');
+
+figure(6);
+Y = [3.36, 3.58, 3.37, 0, 0];
+bar(Y);
+xlabel({'Algorithm', '(Mbps)'});
+ylabel({'%Collisions Interface One', '(Mbps)'});
+yticks(0:50:550);
+title('Multi-link NSTR Operation');
+legend( 'MRBCA','MLSA Dynamic', 'SLCI', 'MLSA', 'MCAA');
+
