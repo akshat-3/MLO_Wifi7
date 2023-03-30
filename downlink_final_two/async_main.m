@@ -445,6 +445,7 @@ end
 %given its rate, start time and end time.
 [ap,sta] = initialise_umac_flows_and_their_properties(ap, sta, app_start_time, app_end_time, app_flow);
 
+fprintf(sta(9).mlo_umac.length)
 
 % 
 % %initialize apps for each node
