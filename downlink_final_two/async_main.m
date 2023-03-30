@@ -238,7 +238,7 @@ for i = 1: n_sta
     sta(i).interface_one.all_four_times_recorded_latency_idx = 0;
     sta(i).interface_one.contention_time = 0;
     %interface2 stats
-   
+
     sta(i).interface_two.num_data_bits_received = 0; 
     sta(i).interface_two.num_pkts_received = 0; %num_pkt_sent_interface1
     sta(i).interface_two.throughput = 0;
@@ -251,7 +251,7 @@ for i = 1: n_sta
     sta(i).interface_two.n_packet_drop = 0;
     sta(i).interface_two.time_first_packet_tx = -1; %thorughput calc
     sta(i).interface_two.time_last_packet_rx = -1; %thorughput calc
-   % sta(i).interface_two.latency_stats = zeros(1, ); %[packet_arrives_at_umac packet_gets_txed packet_gets_rxed]
+    sta(i).interface_two.latency_stats = zeros(1, ); %[packet_arrives_at_umac packet_gets_txed packet_gets_rxed]
     sta(i).interface_two.iterator_packet_at_umac = 0;
     sta(i).interface_two.iterator_packet_tx = 0;
     sta(i).interface_two.iterator_packet_rx = 0;
@@ -259,7 +259,162 @@ for i = 1: n_sta
     sta(i).interface_two.latency_stats = zeros(1, 4);%[time_packet_enters_umac, time_packet_enters_lmac, time_packet_tx, time_packet_rx]
     sta(i).interface_two.all_four_times_recorded_latency_idx = 0;
     sta(i).interface_two.contention_time = 0;
+    
+    sta(i).n_apps_per_sta = n_apps;
+    sta(i).n_mlo_sta = n_mlo_sta;
+    sta(i).n_slo_sta_interface_one = n_slo_sta_interface_one;
+    sta(i).n_slo_sta_interface_two = n_slo_sta_interface_two;
+    sta(i).n_sta = n_sta;
+    sta(i).total_flow = 0;
+    sta(i).throughput = 0;
+    sta(i).percent_air_time = 0;
+    sta(i).percent_success_air_time = 0;
+    sta(i).n_packet_drop = 0;
+    sta(i).time_first_packet_tx = -1; %thorughput calc
+    sta(i).time_last_packet_rx = -1; %if simulation time over but we still are in TX state then what? 
 
+
+    %AP UMAC MLO QUEUE
+    sta(i).mlo_umac = struct(); 
+    sta(i).mlo_umac.flow_details = struct(); %contains info about flows. flows are sorted in ascending order of starting time
+    sta(i).mlo_umac.length = 0;
+    sta(i).mlo_umac.active_index_end = 0;
+
+    %AP UMAC SLO QUEUE
+    %separate for interface one and two
+    sta(i).interface_one.slo_umac = struct();
+    sta(i).interface_one.slo_umac.flow_details = struct();
+    sta(i).interface_one.slo_umac.length = 0;
+    sta(i).interface_one.slo_umac.active_index_end = 0; %1 to active_index_end number of flows are active. denotes the index of last flow which is active
+    %separate for interface one and two
+    sta(i).interface_two.slo_umac = struct();
+    sta(i).interface_two.slo_umac.flow_details = struct();
+    sta(i).interface_two.slo_umac.length = 0;
+    sta(i).interface_two.slo_umac.active_index_end = 0;
+
+    %AP MLO Parameters
+    sta(i).soft_threshold = [0.4,0.5,0.5];  %this should be input to MLO algo. keep changing
+    sta(i).hard_threshold = [0.7,0.85,0.8]; %this should be input to MLO algo. keep changing
+    sta(i).percentage_available_channel = [0.0, 0.0, 0.0];
+    sta(i).channel_occupancy = [0.0, 0.0];
+    sta(i).rate_mcs_latest = [97.5, 97.5]; %in ieee phy params
+
+    sta(i).nint = 2;
+
+    %AP and STA
+    sta(i).association_start = sta_association_start;
+    sta(i).association_end = sta_association_end;
+    % ap.total_mlo_flow = 0;
+    % ap.total_slo_flow_interface_one = 0;
+    % ap.total_slo_flow_interface_two = 0;
+
+    %%AP INTERFACE 1
+    %iterator
+    sta(i).interface_one.i = 0; %index of last packet in m1's queue 
+    sta(i).interface_one.difs = 0;  % interface 1 DIFS counter
+    sta(i).interface_one.bo = 0;  % interface 1 BO counter
+    sta(i).interface_one.sifs = 0;  %interface 1 SIFS counter
+    sta(i).interface_one.tx = 0; %machine 1 transmission counter
+    sta(i).interface_one.pifs = 0; %pifs counter
+    sta(i).interface_one.s_BO = 0;
+    sta(i).interface_one.s_FULL_TX = 0;
+    sta(i).interface_one.s_DATA = 0;
+    sta(i).interface_one.n_agg = 0;
+    sta(i).interface_one.CW = 16;
+    sta(i).interface_one.current_rx_sta = -1;
+    sta(i).interface_one.bw = 0;
+    sta(i).interface_one.count_below_snr = 0;
+    
+
+    %l_mac queue
+    sta(i).interface_one.sta_packet_map = zeros(n_sta, 1); %size needs to be corrected
+    sta(i).interface_one.q = zeros(1);
+    sta(i).interface_one.len_q = 0;
+    %lmac mlo flows
+    sta(i).interface_one.mlo_lmac = struct();
+    sta(i).interface_one.mlo_lmac.flow_details = struct();
+    sta(i).interface_one.mlo_lmac.active_index_end = 0;
+    %lmac slo flows
+    sta(i).interface_one.slo_lmac = struct();
+    sta(i).interface_one.slo_lmac.flow_details = struct();
+    sta(i).interface_one.slo_lmac.active_index_end = 0;
+
+
+    %interface1 stats
+    sta(i).interface_one.state = -1; %state_interface1
+    sta(i).interface_one.num_data_bits_sent = 0; %num_data_bits_sent_interface1 = 0
+    sta(i).interface_one.num_txs = 0; %num_txs_interface1 = 0
+    sta(i).interface_one.primary_channel = 3; %primary_channel_interface1
+    sta(i).interface_one.num_pkt_sent = 0; %num_pkt_sent_interface1
+    sta(i).interface_one.is_collision = false;
+    sta(i).interface_one.n_tx_attempts = 0;
+    sta(i).interface_one.n_collision = 0;
+    sta(i).interface_one.throughput = 0;
+    sta(i).interface_one.num_samples_in_tx_success = 0;
+    sta(i).interface_one.num_samples_in_tx = 0;
+    sta(i).interface_one.n_successful_tx = 0;
+    sta(i).interface_one.percent_air_time = 0;
+    sta(i).interface_one.percent_success_air_time = 0;
+    sta(i).interface_one.n_packet_drop = 0;
+    sta(i).interface_one.time_first_packet_tx = -1; %thorughput calc
+    sta(i).interface_one.time_last_packet_rx = -1; %thorughput calc
+    sta(i).interface_one.n_channel_access = 0;%n_first_channel_gains_access = 0;
+    sta(i).interface_one.link_rate = 0;%link_one_data_rate = 0;
+    sta(i).interface_one.retransmit = zeros(1, 2); %num packets, sample no
+    sta(i).interface_one.contention_time = 0;
+
+    %%AP INTERFACE 2
+    %iterator
+    sta(i).interface_two.i = 0; %index of last packet in m1's queue 
+    sta(i).interface_two.difs = 0;  % interface 1 DIFS counter
+    sta(i).interface_two.bo = 0;  % interface 1 BO counter
+    sta(i).interface_two.sifs = 0;  %interface 1 SIFS counter
+    sta(i).interface_two.tx = 0; %machine 1 transmission counter
+    sta(i).interface_two.pifs = 0; %pifs counter
+    sta(i).interface_two.s_BO = 0;
+    sta(i).interface_two.s_FULL_TX = 0;
+    sta(i).interface_two.s_DATA = 0;
+    sta(i).interface_two.n_agg = 0;
+    sta(i).interface_two.CW = 16;
+    sta(i).interface_two.current_rx_sta = -1;
+    sta(i).interface_two.bw  = 0;
+    sta(i).interface_two.count_below_snr = 0;
+
+    %l_mac queue
+    sta(i).interface_two.sta_packet_map = zeros(n_sta, 1); %size needs to be corrected
+    sta(i).interface_two.q = zeros(1);
+    sta(i).interface_two.len_q = 0;
+    %lmac mlo flows
+    sta(i).interface_two.mlo_lmac = struct();
+    sta(i).interface_two.mlo_lmac.flow_details = struct();
+    sta(i).interface_two.mlo_lmac.active_index_end = 0;
+    %lmac slo flows
+    sta(i).interface_two.slo_lmac = struct();
+    sta(i).interface_two.slo_lmac.flow_details = struct();
+    sta(i).interface_two.slo_lmac.active_index_end = 0;
+
+    %interface 2 stats
+    sta(i).interface_two.state = -1; %state_interface1
+    sta(i).interface_two.num_data_bits_sent = 0;% num_data_bits_sent_interface1 = 0;
+    sta(i).interface_two.num_txs = 0; %num_txs_interface1 = 0;
+    sta(i).interface_two.primary_channel = 21; %primary_channel_interface1 its actually channel no 23 but since occupancy_matrix is sliced in new matrix channel num = 11
+    sta(i).interface_two.num_pkt_sent = 0; %num_pkt_sent_interface1
+    sta(i).interface_two.is_collision = false; 
+    sta(i).interface_two.n_tx_attempts = 0;
+    sta(i).interface_two.n_collision = 0;
+    sta(i).interface_two.throughput = 0;
+    sta(i).interface_two.num_samples_in_tx_success = 0;
+    sta(i).interface_two.num_samples_in_tx = 0;
+    sta(i).interface_two.n_successful_tx = 0;
+    sta(i).interface_two.percent_air_time = 0;
+    sta(i).interface_two.percent_success_air_time = 0;
+    sta(i).interface_two.n_packet_drop = 0;
+    sta(i).interface_two.time_first_packet_tx = -1; %throughput calc
+    sta(i).interface_two.time_last_packet_rx = -1; %thorughput calc
+    sta(i).interface_two.n_channel_access = 0;%n_first_channel_gains_access = 0;
+    sta(i).interface_two.link_rate = 0;%link_one_data_rate = 0;
+    sta(i).interface_two.retransmit = zeros(1, 2); %num packets, sample no
+    sta(i).interface_two.contention_time = 0;
 end
 
 %this property should only be used for SLO stas. this tells which is the
@@ -271,9 +426,7 @@ for i = 1:n_sta
     else
         sta(i).primary_ch = ap.interface_one.primary_channel;
     end
-
 end
-
 %initialize umac mlo and slo flows' properties
 %umac structure has the attributes: flow_details, length(which is the
 %length of flow_details) and active_index_end which points to 
@@ -290,7 +443,7 @@ end
 %after that packets_to_add number of packets get added to the q
 %10) total_packets_possible: which is the no of packets an app can generate
 %given its rate, start time and end time.
-[ap] = initialise_umac_flows_and_their_properties(ap, sta, app_start_time, app_end_time, app_flow);
+[ap,sta] = initialise_umac_flows_and_their_properties(ap, sta, app_start_time, app_end_time, app_flow);
 
 
 % 

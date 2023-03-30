@@ -1,4 +1,4 @@
-function [ap] = initialise_umac_flows_and_their_properties(ap, sta, app_start_time, app_end_time, app_flow)
+function [ap,sta] = initialise_umac_flows_and_their_properties(ap, sta, app_start_time, app_end_time, app_flow)
 %functions sorts flows according to their start time ands them to slo_umac,
 %mlo_umac queues according to if the sta is slo or mlo
 app_start_time_ = [949    10373000    29740000    30215000    54683000    72483000, ...
@@ -68,6 +68,20 @@ for i = 1: (n_sta * n_apps)
             packets_to_add = ap.interface_one.slo_umac.flow_details(ap.interface_one.slo_umac.length).packets_to_add_in_q; %app specific
             ap.interface_one.slo_umac.flow_details(ap.interface_one.slo_umac.length).total_packets_possible = fix((duration * packets_to_add)/samples_to_wait);
          %    fprintf("app_no is: %d sta_no is: %d, duration is %d totalpacketsposisble is %d\n", app_no, sta_no, duration,  ap.interface_one.slo_umac.flow_details(ap.interface_one.slo_umac.length).total_packets_possible);
+        end
+    end
+end
+for i = 1:n_sta
+    if rem(i,2) == 0 || i == 9
+        sta(i).mlo_umac.length = n_apps;
+        sta(i).mlo_umac.queue = zeros(1, n_apps);
+    else
+        if sta(i).primary_ch == ap.interface_two.primary_channel
+            sta(i).interface_two.slo_umac.length = n_apps;
+            sta(i).interface_two.slo_umac.queue = zeros(1, n_apps);
+        else
+            sta(i).interface_one.slo_umac.length = n_apps;
+            sta(i).interface_one.slo_umac.queue = zeros(1, n_apps);
         end
     end
 end
