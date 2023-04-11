@@ -30,29 +30,29 @@ function [interface, sta_to_tx_interface] = update_packets_dropped_or_txed(inter
   
     sta_no =  interface.packet_level_details(1).sta_no;
 
-    filename = string(sta_no) + '.txt';
-   % fid = fopen(filename, 'a');
-    for i = 1:packets_to_remove_from_queue
-%       
-%         fprintf(fid, '%d,%d,%d,%d,%d,%d,%d,%d,%d\n', interface.packet_level_details(i).time_UMAC, ...
+%     filename = string(sta_no) + '.txt';
+%    % fid = fopen(filename, 'a');
+%     for i = 1:packets_to_remove_from_queue
+% %       
+% %         fprintf(fid, '%d,%d,%d,%d,%d,%d,%d,%d,%d\n', interface.packet_level_details(i).time_UMAC, ...
+% %             interface.packet_level_details(i).time_LMAC, interface.packet_level_details(i).time_tx1,...
+% %             interface.packet_level_details(i).time_tx2, interface.packet_level_details(i).time_rx, interface.packet_level_details(i).n_tx_attempts,...
+% %             sta_no, interface.packet_level_details(i).app_no, interface.packet_level_details(i).interface_no);
+
+%         packet_level_details = [interface.packet_level_details(i).time_UMAC, ...
 %             interface.packet_level_details(i).time_LMAC, interface.packet_level_details(i).time_tx1,...
 %             interface.packet_level_details(i).time_tx2, interface.packet_level_details(i).time_rx, interface.packet_level_details(i).n_tx_attempts,...
-%             sta_no, interface.packet_level_details(i).app_no, interface.packet_level_details(i).interface_no);
-
-        packet_level_details = [interface.packet_level_details(i).time_UMAC, ...
-            interface.packet_level_details(i).time_LMAC, interface.packet_level_details(i).time_tx1,...
-            interface.packet_level_details(i).time_tx2, interface.packet_level_details(i).time_rx, interface.packet_level_details(i).n_tx_attempts,...
-            sta_no, interface.packet_level_details(i).app_no, interface.packet_level_details(i).interface_no];
+%             sta_no, interface.packet_level_details(i).app_no, interface.packet_level_details(i).interface_no];
         
-        writematrix(packet_level_details,filename,'WriteMode','append');
+%         writematrix(packet_level_details,filename,'WriteMode','append');
 
-        %note write table maybe slower
-       %remove from packet details
+%         %note write table maybe slower
+%        %remove from packet details
        
-    end
+%     end
 
     
-    %fclose(fid);
+%     %fclose(fid);
     interface.packet_level_details(1:packets_to_remove_from_queue) = [];
     interface.packet_level_details_iterator = interface.packet_level_details_iterator - packets_to_remove_from_queue;
     interface.sta_packet_map(sta_to_tx_number) = interface.sta_packet_map(sta_to_tx_number) - packets_to_remove_from_queue;
