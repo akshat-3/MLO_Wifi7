@@ -29,7 +29,7 @@ function [interface] = get_tx_params(interface, is_bonding, occupancy_at_access)
     % T_success = T_RTS + T_SIFS + T_CTS + T_SIFS + T_DATA + T_SIFS + T_BACK + T_DIFS + Te
     s_OVERHEAD = s_RTS + 2 * s_SIFS + s_CTS;
     
-    search_space_lmac = 256;
+    search_space_lmac = 256; %max aggregation possible
     if is_bonding
        
         [num_channels, ch_left, ch_right] = channel_bonding_wifi_ax_acc_to_sliced_occ_matrix(occupancy_at_access, interface.primary_channel);

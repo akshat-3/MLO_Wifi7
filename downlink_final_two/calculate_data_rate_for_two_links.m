@@ -1,5 +1,4 @@
-function [soft_threshold, hard_threshold, final_load_assign, percentage_available_channel, nint, app_flow] = calculate_data_rate_for_two_links(channel_occupancy, soft_threshold, hard_threshold, round_no, percentage_available_channel, nint, rate, mlo_umac)
-
+function [soft_threshold, hard_threshold, nint, final_load_assign] = calculate_data_rate_for_two_links(channel_occupancy, soft_threshold, hard_threshold, nint, rate, mlo_umac)
    
     channel_occupancy_in_function = channel_occupancy(1:2);
     percentage_available_channel = percentage_available_channel(1:2);
@@ -22,8 +21,6 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
         %flow = (50-10).*rand(1,1) + 10; % generating random flow to be assigned in each round
         app_flow = mlo_umac.flow_details(i).flow; %check
        
-        
-        %fprintf("flow is %d", flow);
         fr = [0, 0];%temporary parameter
         fra=[0, 0];%temporary parameter
         tentative_load_assign=[0, 0];
@@ -35,9 +32,6 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
         fra_new =[0, 0];
         assigned =[0, 0];
         inc_new=[0, 0];
-        
-        II=[0, 0];
-        occupancy=[0, 0];
         ff_e=[0, 0];
         less_room_for_assign=[0, 0];
         is_ch_occ_on_tentative_load_assign_greater_than_soft_th=[0, 0];
@@ -46,16 +40,13 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
         percentage_available_channel(1:2) = 1-channel_occupancy_in_function(1:2);
         
         if (channel_occupancy_in_function(1) > hard_threshold(1)) && (channel_occupancy_in_function(2)>hard_threshold(2))
-            final_load_assign(i,2) = app_flow;
+            final_load_assign(i,2) = 0;
             final_load_assign(i,1) = 0;
             continue;
-            %do i need to change parameters like nint?
         end
     
         ff_exceed=0;
         ff_less=0;
-        ff=0;
-    
     
         for j=1:n_interfaces       % for reinitializing the soft threshold if occupancy is less than threshold for any 1 interfaces
             if(channel_occupancy(j) < soft_threshold_original(j))
@@ -68,8 +59,6 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
         end
     
       
-      
-    
         for j=1:n_interfaces
             if (channel_occupancy_in_function(j) < soft_threshold(j))
                 percentage_available_channel(j) = 1-channel_occupancy_in_function(j);
@@ -161,15 +150,6 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
         
         end
     
-        %if first link is assigned nan/0 then assign all to single link(second interface)
-        if ( isnan(final_load_assign(i,1)) == true ) || ( final_load_assign(i,1) == 0 )
-            final_load_assign(i,2) = app_flow;
-            final_load_assign(i,1) = 0;
-            %do i need to change parameters like nint?
-        end
-    
-       % fprintf("round no = %d, final load assigned is ", round_no);
-       % disp(final_load_assign);
         %LOAD ASSIGNMENT IS DONE
     
         %MADE A CHANGE HERE
@@ -181,7 +161,7 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
             end
           inc_new(j) = final_load_assign(i,j) / rate(j); % increase in channel occupancy
           channel_occupancy_in_function(j) = channel_occupancy_in_function(j) + inc_new(j);
-            %occupancy(i,j,rr)=sink(associated_ap).o(j); this line not req?
+           
         end %DOUBT: do we need to do this? as we have channel occupancy info already.
     
         %fprintf("channel occ is after");
@@ -189,7 +169,7 @@ function [soft_threshold, hard_threshold, final_load_assign, percentage_availabl
        
             
          %  if(aps==1)   
-          for j=1:n_interfaces
+        for j=1:n_interfaces
         
             if channel_occupancy_in_function(j) >= soft_threshold(j)  % checking if after assigning load, occupancy exceeds soft threshold
                 diff_ts(j) = channel_occupancy_in_function(j) - soft_threshold(j);

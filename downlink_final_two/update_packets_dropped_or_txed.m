@@ -1,126 +1,75 @@
-function [interface] = update_packets_dropped_or_txed(interface, current_tx_sta, sample_no)
+function [interface, sta_to_tx_interface] = update_packets_dropped_or_txed(interface, sta_to_tx_number, sta_to_tx_interface, sample_no, is_packet_drop)
 
-  %this function updates the lmac queue
-    
-%     if interface.n_tx_attempts == n_MAX_TX_ATTEMPTS
-%         interface.n_dropped_packets = interface.n_dropped_packets+packets_to_remove_from_queue; 
-%     end
-
-%     packets_to_remove_from_queue = 0;
-% 
-%     if interface.n_tx_attempts == n_MAX_TX_ATTEMPTS
-%         %collision has occured
-%         interface.n_tx_attempts = 0;
-%         packets_dropped = interface.retransmit(1, 1);
-%         packets_to_remove_from_queue = packets_dropped;
-% 
-%         %updating packets.retransmit
-%         size_ = size(interface.retransmit);
-%         size__ = size_(1,1);
-%         iterator = 0;
-%         diff_in_packets = 0;
-%         while diff_in_packets == 0
-% 
-%             iterator = iterator + 1;
-%             diff_in_packets = interface.retransmit(iterator, 1) - n_packets_dropped;
-%             
-%         end
-%         
-%         %update their latency and update total number of packets dropped
-%         interface.n_packets_dropped = interface.n_packets_dropped + packets_dropped;
-%         interface.latency_stats(interface.all_four_times_recorded_latency_idx+1:interface.all_four_times_recorded_latency_idx+n_packets_dropped, 3) = ...
-%             interface.retransmit(iterator-1, 2); %tx time
-%         interface.latency_stats(interface.all_four_times_recorded_latency_idx+1:interface.all_four_times_recorded_latency_idx+n_packets_dropped, 4) = ...
-%             inf; %rx time inf since dropped packets
-%         interface.all_four_times_recorded_latency_idx = interface.all_four_times_recorded_latency_idx + n_packets_dropped;
-% 
-%         if size__ == 1 
-%              %don't remove from retransmit        
-%         else
-%            interface.retransmit(1:iterator-1, :) = [];
-%         end
-% 
-%         for i = iterator:size__
-% 
-%             diff_in_packets = interface.retransmit(i, 1) - n_packets_dropped;
-%             interface.retransmit(1, 1) = interface.retransmit(1, 1) - diff_in_packets;
-%             interface.n_tx_attempts = interface.n_tx_attempts + 1;
-%                   
-%         end
-%          
-% 
-%     else
-%         %success!
-%         interface.n_tx_attempts = 0;
-%         
-%         %all packets txed or different latency
-%         %update their latency and update total number of packets dropped
-%         size_ = size(interface.retransmit);
-%         size__ = size_(1,1);
-%         n_packets_txed = interface.retransmit(1, 1);
-%         packets_to_remove_from_queue = n_packets_txed;
-% 
-%         %all will be removed
-%         iterator = 1;
-%         diff_in_packets = 0;
-%         while diff_in_packets == 0
-% 
-%             diff_in_packets = interface.retransmit(iterator, 1) - n_packets_dropped;
-%             iterator = iterator+1;
-%         end
-%         
-%         %update their latency and update total number of packets txed
-%         interface.latency_stats(interface.all_four_times_recorded_latency_idx+1:interface.all_four_times_recorded_latency_idx+n_packets_txed, 3) = ...
-%             interface.retransmit(iterator - 1, 2); %tx time
-%         interface.latency_stats(interface.all_four_times_recorded_latency_idx+1:interface.all_four_times_recorded_latency_idx+n_packets_txed, 4) = ...
-%             inf; %CHANGE
-%         interface.all_four_times_recorded_latency_idx = interface.all_four_times_recorded_latency_idx + n_packets_txed;
-% 
-%         if size__ == 1 
-%              %don't remove from retransmit        
-%         else
-%            interface.retransmit(1:iterator-1, :) = [];
-%         end
-% 
-%         prev_packets_txed = n_packets_txed;
-%         for i = iterator:size__
-%             
-%             diff_in_packets = interface.retransmit(i, 1) - prev_packets_txed;
-%             
-%             if diff_in_packets > 0
-%                 %but these can also differ?
-%                 packets_to_remove_from_queue = packets_to_remove_from_queue + diff_in_packets;
-%                 interface.latency_stats(interface.all_four_times_recorded_latency_idx+1:interface.all_four_times_recorded_latency_idx + diff_in_packets, 3) = ...
-%                     interface.retransmit(i, 2); %tx time
-%                 interface.latency_stats(interface.all_four_times_recorded_latency_idx+1:interface.all_four_times_recorded_latency_idx + diff_in_packets, 4) = ...
-%                     inf; %CHANGE
-%                 interface.all_four_times_recorded_latency_idx = interface.all_four_times_recorded_latency_idx + diff_in_packets;
-%     
-%                 if i == size__
-%                 else
-%                     interface.retransmit(i, :) = [];
-%                 end
-%             end
-%        
-%                       
-%         end
-%         
-%     end
-
-    %remove packets from lmac queue
     global n_MAX_TX_ATTEMPTS;
-    packets_to_remove_from_queue  = interface.n_agg; 
-    interface.sta_packet_map(current_tx_sta) = interface.sta_packet_map(current_tx_sta) - packets_to_remove_from_queue;
+    %remove packets from lmac queue
+    %only those packets will be removed which have been rxed/n_tx_attempts==4
     
-    %if no more packets for current sta remove from lmac q
-    %shift the q so the next station to be transmitted to is in the
-    %front of the q
+    packets_to_remove_from_queue = 0;
+    n_agg = interface.n_agg;
+    for i = 1:n_agg
+
+        if (is_packet_drop && interface.packet_level_details(i).n_tx_attempts >= n_MAX_TX_ATTEMPTS) || ~is_packet_drop
+            %packet will be removed from LMAC if it has to be dropped or if
+            %it has been rxed
+            if interface.packet_level_details(i).n_tx_attempts > n_MAX_TX_ATTEMPTS
+                fprintf("here\n");
+            end
+            packets_to_remove_from_queue = packets_to_remove_from_queue + 1;
+            if is_packet_drop
+                interface.packet_level_details(i).time_rx = -1; %since packet dropped
+            else
+                interface.packet_level_details(i).time_rx = sample_no;
+            end
+        end
+
+    end
+
+    %save packet level details at ap interface, sta_app_wise
+    %optimise this
+    %file name will be different for different interface
   
-    if  interface.sta_packet_map(current_tx_sta) == 0
+    sta_no =  interface.packet_level_details(1).sta_no;
+
+    filename = string(sta_no) + '.txt';
+   % fid = fopen(filename, 'a');
+    for i = 1:packets_to_remove_from_queue
+%       
+%         fprintf(fid, '%d,%d,%d,%d,%d,%d,%d,%d,%d\n', interface.packet_level_details(i).time_UMAC, ...
+%             interface.packet_level_details(i).time_LMAC, interface.packet_level_details(i).time_tx1,...
+%             interface.packet_level_details(i).time_tx2, interface.packet_level_details(i).time_rx, interface.packet_level_details(i).n_tx_attempts,...
+%             sta_no, interface.packet_level_details(i).app_no, interface.packet_level_details(i).interface_no);
+
+        packet_level_details = [interface.packet_level_details(i).time_UMAC, ...
+            interface.packet_level_details(i).time_LMAC, interface.packet_level_details(i).time_tx1,...
+            interface.packet_level_details(i).time_tx2, interface.packet_level_details(i).time_rx, interface.packet_level_details(i).n_tx_attempts,...
+            sta_no, interface.packet_level_details(i).app_no, interface.packet_level_details(i).interface_no];
+        
+        writematrix(packet_level_details,filename,'WriteMode','append');
+
+        %note write table maybe slower
+       %remove from packet details
+       
+    end
+
+    
+    %fclose(fid);
+    interface.packet_level_details(1:packets_to_remove_from_queue) = [];
+    interface.packet_level_details_iterator = interface.packet_level_details_iterator - packets_to_remove_from_queue;
+    interface.sta_packet_map(sta_to_tx_number) = interface.sta_packet_map(sta_to_tx_number) - packets_to_remove_from_queue;
+
+    if is_packet_drop
+        interface.n_packet_drop = interface.n_packet_drop + packets_to_remove_from_queue;
+        sta_to_tx_interface.n_packet_drop = sta_to_tx_interface.n_packet_drop +  interface.n_agg;
+    end
+
+    %if no more packets for current sta remove from lmac q  
+    if  interface.sta_packet_map(sta_to_tx_number) == 0
         interface.q(1) = [];
         interface.len_q = interface.len_q - 1;     
-        %interface.q(len_q) = current_tx_sta;      
+        %interface.q(len_q) = sta_to_tx_number;      
     end
+    %shift the q so the next station to be transmitted to is in the
+    %front of the q
     interface.q = circshift(interface.q, -1);
    
 

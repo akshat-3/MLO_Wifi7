@@ -1,4 +1,4 @@
-function [interface, sta_to_tx_interface] = update_interface_status(interface, num_samples, s, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
+function [interface, sta_to_tx_interface] = update_interface_status(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
  
 
     %%WIFI PARAMETERS 
@@ -101,20 +101,28 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                     interface.state = STATE_BO;
 
                 else
-                    
-                    
+                  
                     [interface] = get_tx_params(interface, is_channel_bonding, occupancy_at_access);
                                 
-                    if(s+interface.s_FULL_TX <= num_samples) %changed s1 to s
+                    if(sample_no+interface.s_FULL_TX <= num_samples) %changed s1 to s
                         
                         interface.state = STATE_TX;
-                        if interface.n_tx_attempts == 0
-                            interface.retransmit(end, 1) = interface.n_agg;
-                            interface.retransmit(end, 2) = s;
-                        
-                            interface.retransmit(end+1, 1) = interface.n_agg;
-                            interface.retransmit(end+1, 2) = s;
+
+                        %can this be optimised?
+                        for i = 1:interface.n_agg
+
+                            if isempty(interface.packet_level_details(i).time_tx1)
+                               
+                                interface.packet_level_details(i).time_tx1 = sample_no;
+                                interface.packet_level_details(i).time_tx2 = sample_no;
+                                interface.packet_level_details(i).n_tx_attempts = 1;
+                            else
+                                interface.packet_level_details(i).time_tx2 = sample_no;
+                                interface.packet_level_details(i).n_tx_attempts = interface.packet_level_details(i).n_tx_attempts + 1;
+                            end
+
                         end
+
                     else
                         interface.state = STATE_DIFS;
 	                    interface.difs = 0;
@@ -128,17 +136,16 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
             end
 
         case STATE_TX
-            
-            %occupancy_matrix(s, interface.primary_channel) = 1;
-            interface.n_tx_attempts = interface.n_tx_attempts + 1;
+            %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
+
             power_interference = rssi_to_dBm(rssi(1, interface.primary_channel),3);
             distance_in_meter = 10;
             interface.count_below_snr = count_below_snr(interface.primary_channel, interface.bw, power_interference, MCS, distance_in_meter, interface.count_below_snr);
-            %interface.is_collision = is_collision_caused(interface.primary_channel, interface.bw, power_interference, MCS, distance_in_meter);
-           
+
             if interface.tx == 0
                 
-                interface.tx = interface.s_DATA; %num of samples for which machine will stay in TX state
+             
+                interface.tx = interface.s_FULL_TX;
                 interface.tx = interface.tx - 1; %transmit
                 interface.n_channel_access = interface.n_channel_access + 1;
 
@@ -154,6 +161,22 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                 interface.tx = interface.tx - 1; %transmit
             end
 
+            
+            %check if RTS/CTS frames transmitted correctly 
+            %if not transmitted then go to SIFS
+            %if RTS/CTS transmitted correctly then stay in TX
+            if interface.tx == interface.s_DATA
+                interface.is_collision = is_collision_caused(interface.count_below_snr, interface.s_FULL_TX - interface.s_DATA, max_percent_failed_samples_allowed);
+                if interface.is_collision
+                    
+                    interface.state = STATE_SIFS;
+                    interface.sifs = 0;
+                    
+                end
+                interface.count_below_snr = 0;
+            end
+                
+          
         case STATE_PIFS
 
         case STATE_SIFS
@@ -162,17 +185,14 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
 
                 if interface.sifs == s_SIFS && interface.is_collision == true
                     %unsuccessful tx
-                    current_tx_sta = interface.q(1);
-                    [interface, sta_to_tx_interface] = update_unsuccess_tx_stats(interface, sta_to_tx_interface, s);
+                    sta_to_tx_number = interface.q(1);
+                    [interface, sta_to_tx_interface] = update_unsuccess_tx_stats(interface, sta_to_tx_interface, sample_no);
                     
-                    if interface.n_tx_attempts == n_MAX_TX_ATTEMPTS
+                    if interface.packet_level_details(1).n_tx_attempts == n_MAX_TX_ATTEMPTS
 
-                        %drop packets since max attempts reached
-                        [interface, sta_to_tx_interface] = update_dropped_packet_stats(interface, sta_to_tx_interface);
-                       
-                        %remove packets from q
-                        [interface] = update_packets_dropped_or_txed(interface, current_tx_sta, s);
-      
+                        %remove packets from q and update packet latency
+                        is_packet_drop = true;
+                        [interface, sta_to_tx_interface] = update_packets_dropped_or_txed(interface, sta_to_tx_number, sta_to_tx_interface, sample_no, is_packet_drop);
 
                         %change state
                         if (interface.len_q) ~= 0 %packet in q`
@@ -182,10 +202,10 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                         end
 
                         interface.CW = CW;
-                        interface.n_tx_attempts = 0;
+                        
                         
                     else
-
+                        
                         %double contention window
                         if interface.CW < CW_max
                             interface.CW = interface.CW*2;
@@ -205,12 +225,13 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
             else
                 %successful tx
                 %update AP as well as STA stats
-                current_tx_sta= interface.q(1);  
-                [interface, sta_to_tx_interface] = update_success_tx_stats(interface, sta_to_tx_interface, L_D, s);
+                sta_to_tx_number= interface.q(1);  
+                [interface, sta_to_tx_interface] = update_success_tx_stats(interface, sta_to_tx_interface, L_D, sample_no);
 
              
-                %remove packets from q
-                [interface] = update_packets_dropped_or_txed(interface, current_tx_sta, s);
+                %remove packets from q and update packet latency
+                is_packet_drop = false;
+                [interface, sta_to_tx_interface] = update_packets_dropped_or_txed(interface, sta_to_tx_number, sta_to_tx_interface, sample_no, is_packet_drop);
                 
                 %change state
                 if (interface.len_q) ~= 0 %packet in q`
@@ -222,7 +243,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                 interface.difs = 0;
 	            interface.bo = 0;
                 interface.CW = CW;
-                interface.n_tx_attempts = 0;
+               
                 
             end
         

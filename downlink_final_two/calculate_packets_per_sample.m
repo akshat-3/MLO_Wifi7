@@ -20,6 +20,7 @@ function [interface_flow] = calculate_packets_per_sample(interface_flow, app_flo
     interface_flow(idx).packets_to_add_in_q = link_one_data_rate_in_packets_per_tenmicrosecs;
 
     if interface_flow(idx).packets_to_add_in_q ~= 0
+        
         if interface_flow(idx).packets_to_add_in_q > interface_flow(idx).samples_to_wait_before_allocating_q
             interface_flow(idx).packets_to_add_in_q = ceil(interface_flow(idx).packets_to_add_in_q);
        
@@ -31,7 +32,7 @@ function [interface_flow] = calculate_packets_per_sample(interface_flow, app_flo
             interface_flow(idx).packets_to_add_in_q = 1;  %suppose from above calculations we get 4 packets / 100 samples. make it 1 packet/25 samples.
         end
        
-         %suppose from above calculations we get 4 packets / 100 samples. make it 1 packet/25 samples.
+        %suppose from above calculations we get 4 packets / 100 samples. make it 1 packet/25 samples.
     end
 
     interface_flow(idx).x_ = interface_flow(idx).samples_to_wait_before_allocating_q;

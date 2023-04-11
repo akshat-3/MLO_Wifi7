@@ -5,6 +5,7 @@ function [ap_interface, sta_interface] = update_unsuccess_tx_stats(ap_interface,
     if sta_interface.time_first_packet_tx == -1
 
         sta_interface.time_first_packet_tx = sample_no - ap_interface.s_DATA - s_SIFS - s_BACK;
+        
     end
     ap_interface.is_collision = false;
     ap_interface.n_collision = ap_interface.n_collision + 1;
