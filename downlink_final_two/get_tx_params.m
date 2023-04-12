@@ -77,7 +77,7 @@ function [s_full_tx, s_data, num_pkts_agg] = find_max_pkts_aggregated(max_num_pk
     %max_num_pkts_agg = number of ones in the q.
     
     num_pkts_agg = max_num_pkts_agg;
-   
+    fprintf('num_pkts_agg = %d', num_pkts_agg)
     s_data = 0;
     s_full_tx = 0;
     T_SAMPLE = 10*1E-6;
