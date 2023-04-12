@@ -1,7 +1,7 @@
 function carrier_frequency = get_carrier_frequency(primary_channel, bw)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-
+    
     if bw == 20
         if primary_channel == 1
             carrier_frequency = 5.18;
@@ -102,5 +102,8 @@ function carrier_frequency = get_carrier_frequency(primary_channel, bw)
         if primary_channel>=1 && primary_channel <=8
             carrier_frequency = 5.250;
         end
+    else
+        fprintf('Invalid bandwidth %d', bw)
+        fprintf('Invalid primary channel %d', primary_channel)
     end
 end
