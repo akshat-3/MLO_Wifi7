@@ -227,7 +227,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             % sta_to_tx_number= interface.q(1);  
             [interface, sta_to_tx_interface] = update_success_tx_stats_STA(interface, sta_to_tx_interface, L_D, sample_no);
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            update_occcupancy();
+            %update_occcupancy();
             %remove packets from q and update packet latency
             is_packet_drop = false;
             % [interface, sta_to_tx_interface] = update_packets_dropped_or_txed(interface, sta_to_tx_number, sta_to_tx_interface, sample_no, is_packet_drop);
