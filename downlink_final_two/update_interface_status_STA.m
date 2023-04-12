@@ -102,8 +102,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
                 else
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                    sta_to_tx_interface.bw = 1*20;
-                    %[sta_to_tx_interface] = get_tx_params(sta_to_tx_interface, is_channel_bonding, occupancy_at_access);
+                    [sta_to_tx_interface] = get_tx_params(sta_to_tx_interface, is_channel_bonding, occupancy_at_access);
                                 
                     % if(sample_no+sta_to_tx_interface.s_FULL_TX <= num_samples) %changed s1 to s
                         
@@ -137,44 +136,44 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
         case STATE_TX
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
+
             power_interference = rssi_to_dBm(rssi(1, sta_to_tx_interface.primary_channel),3);
             distance_in_meter = 10;
             sta_to_tx_interface.count_below_snr = count_below_snr(sta_to_tx_interface.primary_channel, sta_to_tx_interface.bw, power_interference, MCS, distance_in_meter, sta_to_tx_interface.count_below_snr);
 
-            % if sta_to_tx_interface.tx == 0
+            if sta_to_tx_interface.tx == 0
                 
              
-            %     sta_to_tx_interface.tx = sta_to_tx_interface.s_FULL_TX;
-            %     sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-            %     sta_to_tx_interface.n_channel_access = sta_to_tx_interface.n_channel_access + 1;
+                sta_to_tx_interface.tx = sta_to_tx_interface.s_FULL_TX;
+                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+                sta_to_tx_interface.n_channel_access = sta_to_tx_interface.n_channel_access + 1;
 
-            % elseif sta_to_tx_interface.tx == 1
+            elseif sta_to_tx_interface.tx == 1
                 
-            %     sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-            %     sta_to_tx_interface.is_collision = is_collision_caused(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
-            %     sta_to_tx_interface.count_below_snr = 0;
-            %     sta_to_tx_interface.state = STATE_SIFS;
-            %     sta_to_tx_interface.sifs = 0;
+                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+                sta_to_tx_interface.is_collision = is_collision_caused(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
+                sta_to_tx_interface.count_below_snr = 0;
+                sta_to_tx_interface.state = STATE_SIFS;
+                sta_to_tx_interface.sifs = 0;
 
-            % else
-            %     sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-            % end
+            else
+                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+            end
 
             
             %check if RTS/CTS frames transmitted correctly 
             %if not transmitted then go to SIFS
             %if RTS/CTS transmitted correctly then stay in TX
-            % if sta_to_tx_interface.tx == sta_to_tx_interface.s_DATA
-            sta_to_tx_interface.is_collision = false;
-            % sta_to_tx_interface.is_collision = is_collision_caused(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_FULL_TX - sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
-            %     if sta_to_tx_interface.is_collision
+            if sta_to_tx_interface.tx == sta_to_tx_interface.s_DATA
+                sta_to_tx_interface.is_collision = is_collision_caused(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_FULL_TX - sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
+                if sta_to_tx_interface.is_collision
                     
-            sta_to_tx_interface.state = STATE_SIFS;
-            sta_to_tx_interface.sifs = 0;
+                    sta_to_tx_interface.state = STATE_SIFS;
+                    sta_to_tx_interface.sifs = 0;
                     
-                % end
-            sta_to_tx_interface.count_below_snr = 0;
-                
+                end
+                sta_to_tx_interface.count_below_snr = 0;
+            end
           
         case STATE_PIFS
 

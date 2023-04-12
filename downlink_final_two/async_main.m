@@ -244,7 +244,7 @@ for i = 1: n_sta
     sta(i).interface_one.CW = 16;
     sta(i).interface_one.s_BO = 0;
     sta(i).interface_one.s_FULL_TX = 0;
-    sta(i).interface_one.n_agg = 0;
+    sta(i).interface_one.n_agg = 1;
     sta(i).interface_one.count_below_snr = 0;
     sta(i).interface_one.bw  = 0;
     sta(i).interface_one.tx = 0;
@@ -283,7 +283,7 @@ for i = 1: n_sta
     sta(i).interface_two.CW = 16;
     sta(i).interface_two.s_BO = 0;
     sta(i).interface_two.s_FULL_TX = 0;
-    sta(i).interface_two.n_agg = 0;
+    sta(i).interface_two.n_agg = 1;
     sta(i).interface_two.count_below_snr = 0;
     sta(i).interface_two.bw  = 0;
     sta(i).interface_two.tx = 0;
@@ -399,6 +399,7 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
     if sta(sta_no).interface_one.sendMSG == 1
         sta(sta_no).interface_one.sendMSG = 0;
+        fprint(file,'\n packets aggregated %d', ap.interface_one.n_agg)
         fprintf(file,'\nSTA %d receieved message on interface one', sta_no);
         [ap.interface_one,sta(sta_no).interface_one] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
     end
@@ -416,12 +417,13 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
    [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     if sta(sta_no).interface_two.sendMSG == 1
         sta(sta_no).interface_one.sendMSG = 0;
+        fprint(file,'\n packets aggregated %d', ap.interface_two.n_agg)
         fprintf(file,'\nSTA %d receieved message on interface two', sta_no);
         [ap.interface_two, sta(sta_no).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     end
     if ap.interface_one.ACK_received == 1
         ap.interface_one.ACK_received = 0;
-        fprintf(file,'\nAP receieved ACK on interface one');
+        fprintf(file,'\nAP receieved ACK on interface two');
     end
 
 
