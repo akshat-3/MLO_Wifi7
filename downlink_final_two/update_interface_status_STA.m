@@ -102,7 +102,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
                 else
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                    [sta_to_tx_interface] = get_tx_params(sta_to_tx_interface, is_channel_bonding, occupancy_at_access);
+                    %[sta_to_tx_interface] = get_tx_params(sta_to_tx_interface, is_channel_bonding, occupancy_at_access);
                                 
                     % if(sample_no+sta_to_tx_interface.s_FULL_TX <= num_samples) %changed s1 to s
                         
