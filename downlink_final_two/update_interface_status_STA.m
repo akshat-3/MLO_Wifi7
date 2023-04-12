@@ -55,7 +55,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
     max_percent_failed_samples_allowed = 20; %in one tx if %failed samples are above this percentage the collision. failed sample => snr threshold falls below threshold
 
     %run machine on interface_one
-    sample_busy = occupancy_matrix(1, sta_to_tx_interface.primary_ch);%acc to s as s1 not required
+    sample_busy = occupancy_matrix(1, sta_to_tx_interface.primary_channel);%acc to s as s1 not required
             
     switch sta_to_tx_interface.state
 
@@ -136,7 +136,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
         case STATE_TX
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
-            power_interference = rssi_to_dBm(rssi(1, sta_to_tx_interface.primary_ch),3);
+            power_interference = rssi_to_dBm(rssi(1, sta_to_tx_interface.primary_channel),3);
             distance_in_meter = 10;
             sta_to_tx_interface.count_below_snr = count_below_snr(sta_to_tx_interface.primary_channel, sta_to_tx_interface.bw, power_interference, MCS, distance_in_meter, sta_to_tx_interface.count_below_snr);
 
