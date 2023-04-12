@@ -153,6 +153,7 @@ ap.interface_one.n_channel_access = 0;%n_first_channel_gains_access = 0;
 ap.interface_one.link_rate = 0;%link_one_data_rate = 0;
 ap.interface_one.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_one.contention_time = 0;
+ap.interface_one.ACK_received = 0;
 
 %%AP INTERFACE 2
 %iterator
@@ -212,6 +213,7 @@ ap.interface_two.n_channel_access = 0;%n_first_channel_gains_access = 0;
 ap.interface_two.link_rate = 0;%link_one_data_rate = 0;
 ap.interface_two.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_two.contention_time = 0;
+ap.interface_two.ACK_received = 0;
 
 sta = struct();
 
@@ -236,7 +238,21 @@ for i = 1: n_sta
     %sta(i).time_last_packet_rx = -1;
     
     %interface1 stats
-   
+    sta(i).interface_one.state = -1; %state_interface1
+    sta(i).interface_one.difs = 0;  % interface 1 DIFS counter
+    sta(i).interface_one.bo = 0;  % interface 1 BO counter
+    sta(i).interface_one.CW = 16;
+    sta(i).interface_one.s_BO = 0;
+    sta(i).interface_one.s_FULL_TX = 0;
+    sta(i).interface_one.n_agg = 0;
+    sta(i).interface_one.count_below_snr = 0;
+    sta(i).interface_one.bw  = 0;
+    sta(i).interface_one.tx = 0;
+    sta(i).interface_one.s_FULL_TX  = 0;
+    sta(i).interface_one.n_channel_access = 0;
+    sta(i).interface_one.is_collision = false;
+    sta(i).interface_one.s_DATA = 0;
+    sta(i).interface_one.sifs = 0;
     sta(i).interface_one.num_data_bits_received = 0; 
     sta(i).interface_one.num_pkts_received = 0; %num_pkt_sent_interface1
     sta(i).interface_one.throughput = 0;
@@ -257,8 +273,24 @@ for i = 1: n_sta
     sta(i).interface_one.latency_stats = zeros(1, 4);%[time_packet_enters_umac, time_packet_enters_lmac, time_packet_tx, time_packet_rx]
     sta(i).interface_one.all_four_times_recorded_latency_idx = 0;
     sta(i).interface_one.contention_time = 0;
+    sta(i).interface_one.sendMSG = 0;
+
     %interface2 stats
-   
+    sta(i).interface_two.state = -1; %state_interface2
+    sta(i).interface_two.difs = 0;  % interface 2 DIFS counter
+    sta(i).interface_two.bo = 0; %backoff counter
+    sta(i).interface_two.CW = 16;
+    sta(i).interface_two.s_BO = 0;
+    sta(i).interface_two.s_FULL_TX = 0;
+    sta(i).interface_two.n_agg = 0;
+    sta(i).interface_two.count_below_snr = 0;
+    sta(i).interface_two.bw  = 0;
+    sta(i).interface_two.tx = 0;
+    sta(i).interface_two.s_FULL_TX  = 0;
+    sta(i).interface_two.n_channel_access = 0;
+    sta(i).interface_two.is_collision = false;
+    sta(i).interface_two.s_DATA = 0;
+    sta(i).interface_two.sifs = 0;
     sta(i).interface_two.num_data_bits_received = 0; 
     sta(i).interface_two.num_pkts_received = 0; %num_pkt_sent_interface1
     sta(i).interface_two.throughput = 0;
@@ -279,6 +311,7 @@ for i = 1: n_sta
     sta(i).interface_two.latency_stats = zeros(1, 4);%[time_packet_enters_umac, time_packet_enters_lmac, time_packet_tx, time_packet_rx]
     sta(i).interface_two.all_four_times_recorded_latency_idx = 0;
     sta(i).interface_two.contention_time = 0;
+    sta(i).interface_two.sendMSG = 0;
 
 end
 
@@ -350,28 +383,45 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
 
    
    %UPDATE UMAC, LMAC QUEUES. RUN FLOW ALLOCATION ALGORITHM IF REQUIRED
-   [ap, sta, time] = update_slo_mlo_flows(ap, sample_no, sta, time, historical_occupancy_matrix);
+    [ap, sta, time] = update_slo_mlo_flows(ap, sample_no, sta, time, historical_occupancy_matrix);
   
    
    %If interface is in BO/TX state, check which station it is trying to
    %transmit to
   
-   sta_no = 1;
-   if ap.interface_one.len_q > 0
+    sta_no = 1;
+    if ap.interface_one.len_q > 0
         sta_no = ap.interface_one.q(1);
-   end
+    end
    %UPDATE INTERFACE ONE STATE
-   [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
- 
-
+    [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+    if sta(sta_no).interface_one.sendMSG == 1
+        sta(sta_no).interface_one.sendMSG = 0;
+        fprintf('STA %d receieved message on interface one', sta_no);
+        [ap.interface_one,sta(sta_no).interface_one] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+    end
+    if ap.interface_one.ACK_received == 1
+        ap.interface_one.ACK_received = 0;
+        fprintf('AP receieved ACK on interface one');
+    end
    %If interface is in BO/TX state, check which station it is trying to
    %transmit to 
-   sta_no = 1;
-   if ap.interface_two.len_q > 0
+    sta_no = 1;
+    if ap.interface_two.len_q > 0
         sta_no = ap.interface_two.q(1);
-   end 
+    end 
    %UPDATE INTERFACE TWO STATE
    [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+    if sta(sta_no).inteface_two.sendMSG == 1
+        sta(sta_no).interface_one.sendMSG = 0;
+        fprintf('STA %d receieved message on interface two', sta_no);
+        [ap.interface_two, sta(sta_no).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+    end
+    if ap.interface_one.ACK_received == 1
+        ap.interface_one.ACK_received = 0;
+        fprintf('AP receieved ACK on interface one');
+    end
+
 
    k = k+1;
    sample_no = sample_no + 1;
