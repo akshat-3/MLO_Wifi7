@@ -12,7 +12,7 @@ function [occupancy_matrix, rssi_matrix] = get_occupancy_matrix_in_pieces(peak_t
 offset = 199; %dataset will start from it num 200 
 iteration_no = iteration_no + offset;
 
-raw_file= load( append(strcat('../FCB_11/it1 (', num2str(iteration_no), ')')) );
+raw_file= load( append(strcat('../../FCB_11/it1 (', num2str(iteration_no), ')')) );
     
 b = struct2cell(raw_file);
 

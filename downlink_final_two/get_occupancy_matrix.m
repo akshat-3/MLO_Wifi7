@@ -8,7 +8,7 @@ occupancy_matrix = zeros(num_col,NUM_RFs);   % Whole occupancy samples of each R
 
 for j = 1 : num_iterations
 
-    raw_file= load( append(strcat('..\FCB_11\it1 (', num2str(j), ')')) );
+    raw_file= load( append(strcat('..\..\FCB_11\it1 (', num2str(j), ')')) );
         
     b = struct2cell(raw_file);
     
