@@ -275,6 +275,9 @@ for i = 1: n_sta
     sta(i).interface_one.all_four_times_recorded_latency_idx = 0;
     sta(i).interface_one.contention_time = 0;
     sta(i).interface_one.sendMSG = 0;
+    sta(i).interface_one.packet_level_details = struct('time_UMAC', {}, 'time_LMAC', {}, 'time_tx1', {}, 'time_tx2', {}, ...
+    'time_rx', {},'n_tx_attempts', {},'sta_no', {},'app_no', {},'interface_no', {}); 
+    sta(i).interface_one.packet_level_details_iterator = 0;
 
     %interface2 stats
     sta(i).interface_two.state = -1; %state_interface2
@@ -314,6 +317,9 @@ for i = 1: n_sta
     sta(i).interface_two.all_four_times_recorded_latency_idx = 0;
     sta(i).interface_two.contention_time = 0;
     sta(i).interface_two.sendMSG = 0;
+    sta(i).interface_two.packet_level_details = struct('time_UMAC', {}, 'time_LMAC', {}, 'time_tx1', {}, 'time_tx2', {}, ...
+    'time_rx', {},'n_tx_attempts', {},'sta_no', {},'app_no', {},'interface_no', {}); 
+    sta(i).interface_two.packet_level_details_iterator = 0;
 
 end
 
@@ -400,13 +406,16 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     if sta(sta_no).interface_one.sendMSG == 1
         sta(sta_no).interface_one.sendMSG = 0;
         fprintf(file,'\nSTA %d receieved message on interface one', sta_no);
-        while ap.interface_one.ACK_received == 0
+        while ap.interface_one.ACK_received == 0 || ap.interface_one.ACK_received == -1
             [ap.interface_one, sta(sta_no).interface_one] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
         end
     end
     if ap.interface_one.ACK_received == 1
         ap.interface_one.ACK_received = 0;
         fprintf(file,'\nAP receieved ACK on interface one');
+    elseif ap.interface_one.ACK_received == -2
+        ap.interface_one.ACK_received = 0;
+        fprintf(file,'\nAP receieved no ACK');
     end
    %If interface is in BO/TX state, check which station it is trying to
    %transmit to 
@@ -416,10 +425,10 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end 
    %UPDATE INTERFACE TWO STATE
    [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
-    if sta(sta_no).interface_two.sendMSG == 1
+    if sta(sta_no).interface_two.sendMSG == 1 
         sta(sta_no).interface_two.sendMSG = 0;
         fprintf(file,'\nSTA %d receieved message on interface two', sta_no);
-        while ap.interface_two.ACK_received == 0
+        while ap.interface_two.ACK_received == 0 || ap.interface_two.ACK_received == -1
             [ap.interface_two, sta(sta_no).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     
         end
@@ -427,6 +436,9 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     if ap.interface_two.ACK_received == 1
         ap.interface_two.ACK_received = 0;
         fprintf(file,'\nAP receieved ACK on interface two');
+    elseif ap.interface_two.ACK_received == -2
+        ap.interface_two.ACK_received = 0;
+        fprintf(file,'\nAP receieved no ACK');
     end
 
 
