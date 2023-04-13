@@ -8,6 +8,7 @@ function is_collision = is_collision_caused(samples_below_snr, total_samples, ma
    if percent_fail < max_percent_failed_samples_allowed 
        is_collision = false;
    else
+        fprintf('/nTRUE')
        is_collision = true;
    end
 end
