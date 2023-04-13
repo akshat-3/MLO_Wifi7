@@ -143,24 +143,24 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             distance_in_meter = 10;
             sta_to_tx_interface.count_below_snr = count_below_snr(sta_to_tx_interface.primary_channel, sta_to_tx_interface.bw, power_interference, MCS, distance_in_meter, sta_to_tx_interface.count_below_snr);
 
-            if sta_to_tx_interface.tx == 0
+            % if sta_to_tx_interface.tx == 0
                 
              
-                sta_to_tx_interface.tx = sta_to_tx_interface.s_FULL_TX;
-                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-                sta_to_tx_interface.n_channel_access = sta_to_tx_interface.n_channel_access + 1;
+            %     sta_to_tx_interface.tx = sta_to_tx_interface.s_FULL_TX;
+            %     sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+            %     sta_to_tx_interface.n_channel_access = sta_to_tx_interface.n_channel_access + 1;
 
-            elseif sta_to_tx_interface.tx == 1
+            % elseif sta_to_tx_interface.tx == 1
                 
                 sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-                sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
+                % sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
                 sta_to_tx_interface.count_below_snr = 0;
                 sta_to_tx_interface.state = STATE_SIFS;
                 sta_to_tx_interface.sifs = 0;
 
-            else
-                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-            end
+            % else
+            %     sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+            % end
 
             
             %check if RTS/CTS frames transmitted correctly 
