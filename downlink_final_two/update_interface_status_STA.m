@@ -166,16 +166,16 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             %check if RTS/CTS frames transmitted correctly 
             %if not transmitted then go to SIFS
             %if RTS/CTS transmitted correctly then stay in TX
-            if sta_to_tx_interface.tx == sta_to_tx_interface.s_DATA
-                sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_FULL_TX - sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
-                if sta_to_tx_interface.is_collision
-                    fprintf('/nhelloo')
-                    sta_to_tx_interface.state = STATE_SIFS;
-                    sta_to_tx_interface.sifs = 0;
+            % if sta_to_tx_interface.tx == sta_to_tx_interface.s_DATA
+            %     sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_FULL_TX - sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
+            %     if sta_to_tx_interface.is_collision
+            %         fprintf('/nhelloo')
+            %         sta_to_tx_interface.state = STATE_SIFS;
+            %         sta_to_tx_interface.sifs = 0;
                     
-                end
-                sta_to_tx_interface.count_below_snr = 0;
-            end
+            %     end
+            %     sta_to_tx_interface.count_below_snr = 0;
+            % end
           
         case STATE_PIFS
 
