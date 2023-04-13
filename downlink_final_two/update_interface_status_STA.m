@@ -181,8 +181,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
         case STATE_SIFS
             fprintf('\nsending')
-            if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
-                fprintf('hree\n')
+            % if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
                 if sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true
                     %unsuccessful tx
                     %sta_to_tx_number = interface.q(1);
@@ -222,7 +221,6 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 sta_to_tx_interface.sifs = sta_to_tx_interface.sifs + 1;
                 
 
-            else
                 %successful tx
                 %update AP as well as STA stats
                 % sta_to_tx_number= sta_to_tx_interface.q(1);  
