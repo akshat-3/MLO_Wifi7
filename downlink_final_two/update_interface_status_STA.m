@@ -244,7 +244,6 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 sta_to_tx_interface.CW = CW;
                
                 
-            end
         
         otherwise
             error('State is not valid!')
