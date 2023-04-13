@@ -110,7 +110,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
                         %can this be optimised?
 
-                            if interface.ACK_received != -1 && interface.ACK_received == -2
+                            if interface.ACK_received ~= -1 && interface.ACK_received ~= -2
                                
                                 sta_to_tx_interface.packet_level_details(i).time_tx1 = sample_no;
                                 sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
