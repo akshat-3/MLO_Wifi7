@@ -113,14 +113,14 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
                         %can this be optimised?
 
-                            if isempty(sta_to_tx_interface.packet_level_details(1).time_tx1)
+                            if isempty(sta_to_tx_interface.packet_level_details.time_tx1)
                                
-                                sta_to_tx_interface.packet_level_details(1).time_tx1 = sample_no;
-                                sta_to_tx_interface.packet_level_details(1).time_tx2 = sample_no;
-                                sta_to_tx_interface.packet_level_details(1).n_tx_attempts = 1;
+                                sta_to_tx_interface.packet_level_details.time_tx1 = sample_no;
+                                sta_to_tx_interface.packet_level_details.time_tx2 = sample_no;
+                                sta_to_tx_interface.packet_level_details.n_tx_attempts = 1;
                             else
-                                sta_to_tx_interface.packet_level_details(1).time_tx2 = sample_no;
-                                sta_to_tx_interface.packet_level_details(1).n_tx_attempts = sta_to_tx_interface.packet_level_details(i).n_tx_attempts + 1;
+                                sta_to_tx_interface.packet_level_details.time_tx2 = sample_no;
+                                sta_to_tx_interface.packet_level_details.n_tx_attempts = sta_to_tx_interface.packet_level_details.n_tx_attempts + 1;
                             end
 
                         
@@ -189,7 +189,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                     %sta_to_tx_number = interface.q(1);
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats_STA(interface, sta_to_tx_interface, sample_no);
                     
-                    if sta_to_tx_interface.packet_level_details(1).n_tx_attempts == n_MAX_TX_ATTEMPTS
+                    if sta_to_tx_interface.packet_level_details.n_tx_attempts == n_MAX_TX_ATTEMPTS
 
                         %remove packets from q and update packet latency
                         is_packet_drop = true;
