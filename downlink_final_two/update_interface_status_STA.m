@@ -112,19 +112,18 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                     sta_to_tx_interface.state = STATE_TX;
 
                         %can this be optimised?
-                        for i = 0:sta_to_tx_interface.n_agg
 
-                            if isempty(sta_to_tx_interface.packet_level_details(i).time_tx1)
+                            if isempty(sta_to_tx_interface.packet_level_details(1).time_tx1)
                                
-                                sta_to_tx_interface.packet_level_details(i).time_tx1 = sample_no;
-                                sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
-                                sta_to_tx_interface.packet_level_details(i).n_tx_attempts = 1;
+                                sta_to_tx_interface.packet_level_details(1).time_tx1 = sample_no;
+                                sta_to_tx_interface.packet_level_details(1).time_tx2 = sample_no;
+                                sta_to_tx_interface.packet_level_details(1).n_tx_attempts = 1;
                             else
-                                sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
-                                sta_to_tx_interface.packet_level_details(i).n_tx_attempts = sta_to_tx_interface.packet_level_details(i).n_tx_attempts + 1;
+                                sta_to_tx_interface.packet_level_details(1).time_tx2 = sample_no;
+                                sta_to_tx_interface.packet_level_details(1).n_tx_attempts = sta_to_tx_interface.packet_level_details(i).n_tx_attempts + 1;
                             end
 
-                        end
+                        
 
                     else
                         interface.state = STATE_DIFS;
