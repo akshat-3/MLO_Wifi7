@@ -67,7 +67,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             % end
         
         case STATE_DIFS
-            %fprintf('\nSTATE_DIFS')
+            fprintf('\nSTATE_DIFS')
             %s1 = s1 + 1;
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             % Idle sample
@@ -93,7 +93,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             end
 
         case STATE_BO
-            %fprintf('\nSTATE_BO')
+            fprintf('\nSTATE_BO')
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             %s1 = s1 + 1;
             if ~sample_busy % Idle sample

@@ -137,7 +137,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
 
         case STATE_TX
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
-
+                
             power_interference = rssi_to_dBm(rssi(1, interface.primary_channel),3);
             distance_in_meter = 10;
             interface.count_below_snr = count_below_snr(interface.primary_channel, interface.bw, power_interference, MCS, distance_in_meter, interface.count_below_snr);
