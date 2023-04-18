@@ -161,7 +161,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 sta_to_tx_interface.sifs = 0;
                 sta_to_tx_interface.is_collision = false;
             else
-                sta_to_tx_interface.tx = sta_to_tx_interface - 1; %transmit
+                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
             end
 
             
