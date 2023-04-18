@@ -406,21 +406,17 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
         sta_no = ap.interface_one.q(1);
     end
    %UPDATE INTERFACE ONE STATE
-    [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+   if ap.interface_one.ACK_received == 1
+        fprintf(file,'\nAP receieved ACK on interface one');
+        ap.interface_one.ACK_received = 0;
+        [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+   else
+     fprintf(file,'\nAP receieved no ACK on interface one');
+   end
     if sta(sta_no).interface_one.sendMSG == 1
         sta(sta_no).interface_one.sendMSG = 0;
         fprintf(file,'\nSTA %d receieved message on interface one', sta_no);
         [ap.interface_one, sta(sta_no).interface_one] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
-    end
-    if ap.interface_one.ACK_received == 1
-        ap.interface_one.ACK_received = 0;
-        fprintf(file,'\nAP receieved ACK on interface one');
-    elseif ap.interface_one.ACK_received == -1
-        ap.interface_one.ACK_received = 0;
-        fprintf(file,'\nAP receieved no ACK');
-    elseif ap.interface_one.ACK_received == 0
-        ap.interface_one.ACK_received = 0;
-        %fprintf(file,'\trying ack');
     end
    %If interface is in BO/TX state, check which station it is trying to
    %transmit to 
@@ -429,21 +425,17 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
         sta_no = ap.interface_two.q(1);
     end 
    %UPDATE INTERFACE TWO STATE
-   [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+   if ap.interface_two.ACK_received == 1
+        fprintf(file,'\nAP receieved ACK on interface two');
+        ap.interface_two.ACK_received = 0;
+        [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+   else
+     fprintf(file,'\nAP receieved no ACK');
+    end
     if sta(sta_no).interface_two.sendMSG == 1 
         sta(sta_no).interface_two.sendMSG = 0;
         fprintf(file,'\nSTA %d receieved message on interface two', sta_no);
-            [ap.interface_two, sta(sta_no).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
-    end
-    if ap.interface_two.ACK_received == 1
-        ap.interface_two.ACK_received = 0;
-        fprintf(file,'\nAP receieved ACK on interface two');
-    elseif ap.interface_two.ACK_received == -1
-        ap.interface_two.ACK_received = 0;
-        fprintf(file,'\nAP receieved no ACK');
-    elseif ap.interface_two.ACK_received == 0
-        ap.interface_two.ACK_received = 0;
-        %fprintf(file,'\trying ack');
+        [ap.interface_two, sta(sta_no).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     end
     
 
