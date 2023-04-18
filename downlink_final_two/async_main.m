@@ -278,7 +278,9 @@ for i = 1: n_sta
     sta(i).interface_one.packet_level_details = struct('time_UMAC', {}, 'time_LMAC', {}, 'time_tx1', {}, 'time_tx2', {}, ...
     'time_rx', {},'n_tx_attempts', {},'sta_no', {},'app_no', {},'interface_no', {}); 
     sta(i).interface_one.packet_level_details_iterator = 0;
-
+    len = 1;
+    sta(i).interface_one.packet_level_details_iterator =  sta(i).interface_one.packet_level_details_iterator + 1;
+    sta(i).interface_one.packet_level_details(len).interface_no = 1;
     %interface2 stats
     sta(i).interface_two.state = -1; %state_interface2
     sta(i).interface_two.difs = 0;  % interface 2 DIFS counter
@@ -320,7 +322,9 @@ for i = 1: n_sta
     sta(i).interface_two.packet_level_details = struct('time_UMAC', {}, 'time_LMAC', {}, 'time_tx1', {}, 'time_tx2', {}, ...
     'time_rx', {},'n_tx_attempts', {},'sta_no', {},'app_no', {},'interface_no', {}); 
     sta(i).interface_two.packet_level_details_iterator = 0;
-
+    len = 1;
+    sta(i).interface_two.packet_level_details_iterator =  sta(i).interface_two.packet_level_details_iterator + 1;
+    sta(i).interface_two.packet_level_details(len).interface_no = 2;
 end
 
 %this property should only be used for SLO stas. this tells which is the
