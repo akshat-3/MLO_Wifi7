@@ -153,7 +153,7 @@ ap.interface_one.n_channel_access = 0;%n_first_channel_gains_access = 0;
 ap.interface_one.link_rate = 0;%link_one_data_rate = 0;
 ap.interface_one.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_one.contention_time = 0;
-ap.interface_one.ACK_received = 0;
+ap.interface_one.ACK_received = 1;
 
 %%AP INTERFACE 2
 %iterator
@@ -213,7 +213,7 @@ ap.interface_two.n_channel_access = 0;%n_first_channel_gains_access = 0;
 ap.interface_two.link_rate = 0;%link_one_data_rate = 0;
 ap.interface_two.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_two.contention_time = 0;
-ap.interface_two.ACK_received = 0;
+ap.interface_two.ACK_received = 1;
 
 sta = struct();
 
