@@ -107,30 +107,31 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                     %sta_to_tx_interface.bw = 1*20;
                     [sta_to_tx_interface] = get_tx_params_STA(sta_to_tx_interface, is_channel_bonding, occupancy_at_access);
                                 
-                    % if(sample_no+sta_to_tx_interface.s_FULL_TX <= num_samples) %changed s1 to s
+                    if(sample_no+sta_to_tx_interface.s_FULL_TX <= num_samples) %changed s1 to s
                         
                     sta_to_tx_interface.state = STATE_TX;
 
                         %can this be optimised?
-                        % for i = 1:sta_to_tx_interface.n_agg
+                        for i = 1:sta_to_tx_interface.n_agg
 
-                        %     if isempty(sta_to_tx_interface.packet_level_details(i).time_tx1)
+                            if isempty(sta_to_tx_interface.packet_level_details(i).time_tx1)
                                
-                        %         sta_to_tx_interface.packet_level_details(i).time_tx1 = sample_no;
-                        %         sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
-                        %         sta_to_tx_interface.packet_level_details(i).n_tx_attempts = 1;
-                        %     else
-                        %         sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
-                        %         sta_to_tx_interface.packet_level_details(i).n_tx_attempts = sta_to_tx_interface.packet_level_details(i).n_tx_attempts + 1;
-                        %     end
+                                sta_to_tx_interface.packet_level_details(i).time_tx1 = sample_no;
+                                sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
+                                sta_to_tx_interface.packet_level_details(i).n_tx_attempts = 1;
+                            else
+                                sta_to_tx_interface.packet_level_details(i).time_tx2 = sample_no;
+                                sta_to_tx_interface.packet_level_details(i).n_tx_attempts = sta_to_tx_interface.packet_level_details(i).n_tx_attempts + 1;
+                            end
 
-                        % end
+                        end
 
-                    % else
-                    %     interface.state = STATE_DIFS;
-	                %     interface.difs = 0;
-	                %     interface.bo = 0;
+                    else
+                        interface.state = STATE_DIFS;
+	                    interface.difs = 0;
+	                    interface.bo = 0;
                 end
+            end
                 
             else % sample busy
                 sta_to_tx_interface.difs = 0;
@@ -145,24 +146,24 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             distance_in_meter = 10;
             sta_to_tx_interface.count_below_snr = count_below_snr(sta_to_tx_interface.primary_channel, sta_to_tx_interface.bw, power_interference, MCS, distance_in_meter, sta_to_tx_interface.count_below_snr);
 
-            % if sta_to_tx_interface.tx == 0
+            if sta_to_tx_interface.tx == 0
                 
              
-            %     sta_to_tx_interface.tx = sta_to_tx_interface.s_FULL_TX;
-            %     sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
-            %     sta_to_tx_interface.n_channel_access = sta_to_tx_interface.n_channel_access + 1;
+                sta_to_tx_interface.tx = sta_to_tx_interface.s_FULL_TX;
+                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+                sta_to_tx_interface.n_channel_access = sta_to_tx_interface.n_channel_access + 1;
 
-            % elseif sta_to_tx_interface.tx == 1
+            elseif sta_to_tx_interface.tx == 1
                 
-                % sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
+                sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
                 sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
                 sta_to_tx_interface.count_below_snr = 0;
                 sta_to_tx_interface.state = STATE_SIFS;
                 sta_to_tx_interface.sifs = 0;
-                %sta_to_tx_interface.is_collision = false;
-            % else
-            %     sta_to_tx_interface.tx = sta_to_tx_interface- 1; %transmit
-            % end
+                sta_to_tx_interface.is_collision = false;
+            else
+                sta_to_tx_interface.tx = sta_to_tx_interface- 1; %transmit
+            end
 
             
             %check if RTS/CTS frames transmitted correctly 
@@ -183,31 +184,31 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
         case STATE_SIFS
             fprintf('\nsending')
-            % if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
+            if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
                 if sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true
                     %unsuccessful tx
                     %sta_to_tx_number = interface.q(1);
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats_STA(interface, sta_to_tx_interface, sample_no);
                     
-                    % if sta_to_tx_interface.packet_level_details(1).n_tx_attempts == n_MAX_TX_ATTEMPTS
+                    if sta_to_tx_interface.packet_level_details(1).n_tx_attempts == n_MAX_TX_ATTEMPTS
 
-                    %     %remove packets from q and update packet latency
-                    %     is_packet_drop = true;
-                    %     interface.ACK_received = -2;
-                    %     %[interface, sta_to_tx_interface] = update_packets_dropped_or_txed(interface, sta_to_tx_number, sta_to_tx_interface, sample_no, is_packet_drop);
+                        %remove packets from q and update packet latency
+                        is_packet_drop = true;
+                        interface.ACK_received = -2;
+                        %[interface, sta_to_tx_interface] = update_packets_dropped_or_txed(interface, sta_to_tx_number, sta_to_tx_interface, sample_no, is_packet_drop);
 
-                    %     %change state
-                    %     % if (sta_to_tx_interface.len_q) ~= 0 %packet in q`
-                    %     %     sta_to_tx_interface.state = STATE_DIFS;
-                    %     % else
-                    %     %     sta_to_tx_interface.state = STATE_IDLE;
-                    %     % end
-                    %     sta_to_tx_interface.state = STATE_DIFS;
+                        %change state
+                        % if (sta_to_tx_interface.len_q) ~= 0 %packet in q`
+                        %     sta_to_tx_interface.state = STATE_DIFS;
+                        % else
+                        %     sta_to_tx_interface.state = STATE_IDLE;
+                        % end
+                        sta_to_tx_interface.state = STATE_DIFS;
 
-                    %     sta_to_tx_interface.CW = CW;
+                        sta_to_tx_interface.CW = CW;
                         
                         
-                    % else
+                    else
                         
                         %double contention window
                         if sta_to_tx_interface.CW < CW_max
@@ -215,14 +216,14 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                         end
                         %contend for channel access again
                         sta_to_tx_interface.state = STATE_DIFS;
-                        
+                    end
                     sta_to_tx_interface.difs = 0;
 	                sta_to_tx_interface.bo = 0;
                 end
                 
                 sta_to_tx_interface.sifs = sta_to_tx_interface.sifs + 1;
                 
-
+            else
                 %successful tx
                 %update AP as well as STA stats
                 % sta_to_tx_number= sta_to_tx_interface.q(1);  
@@ -246,10 +247,9 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 sta_to_tx_interface.CW = CW;
                
                 
-        
+            end
         otherwise
             error('State is not valid!')
     end
-
-    
+  
 end
