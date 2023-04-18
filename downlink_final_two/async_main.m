@@ -443,7 +443,7 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
         fprintf(file,'\nAP receieved no ACK');
     elseif ap.interface_two.ACK_received == 0
         ap.interface_two.ACK_received = 0;
-        fprintf(file,'\trying ack');
+        %fprintf(file,'\trying ack');
     end
     
 
