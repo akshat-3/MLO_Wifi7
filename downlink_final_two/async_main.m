@@ -4,7 +4,7 @@ tic;
 file=fopen('uplink.txt','w');
 %get occupancy matrix and rssi matrix
 %remember to change offset on get occupancy matrix by piece
-num_iterations = 1500; % max value 2001 %800
+num_iterations = 200; % max value 2001 %800
 num_rssi_samples_per_iter = 10000;%100000
 NUM_RFs = 24; 
 peak_threshold = 150; %in WACA code  its 150. for testing purpose taking it as 50
