@@ -67,7 +67,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             % end
         
         case STATE_DIFS
-            fprintf('\nSTATE_DIFS')
+            %fprintf('\nSTATE_DIFS')
             %s1 = s1 + 1;
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             % Idle sample
@@ -93,7 +93,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             end
 
         case STATE_BO
-            fprintf('\nSTATE_BO')
+            %fprintf('\nSTATE_BO')
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             %s1 = s1 + 1;
             if ~sample_busy % Idle sample
@@ -138,7 +138,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             end
 
         case STATE_TX
-            % fprintf('\ntrying to send')
+            fprintf('\ntrying to send')
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
 
             power_interference = rssi_to_dBm(rssi(1, sta_to_tx_interface.primary_channel),3);
