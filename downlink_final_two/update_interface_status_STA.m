@@ -186,6 +186,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
                 if sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true
                     %unsuccessful tx
+                    fprintf('\nunsuccessful tx')
                     %sta_to_tx_number = interface.q(1);
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats_STA(interface, sta_to_tx_interface, sample_no);
                     
@@ -224,6 +225,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 
             else
                 %successful tx
+                fprintf('\nsuccessful tx')
                 %update AP as well as STA stats
                 % sta_to_tx_number= sta_to_tx_interface.q(1);  
                 [interface, sta_to_tx_interface] = update_success_tx_stats_STA(interface, sta_to_tx_interface, L_D, sample_no);
