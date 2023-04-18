@@ -67,11 +67,11 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             % end
         
         case STATE_DIFS
-            fprintf('\nSTATE_DIFS')
             %s1 = s1 + 1;
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             % Idle sample
             if ~sample_busy
+                fprintf('\nnot busy')
                 if sta_to_tx_interface.difs < s_DIFS
 
                     sta_to_tx_interface.difs = sta_to_tx_interface.difs + 1;
@@ -88,6 +88,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 end
             % Busy sample
             else
+                fprintf('\nbusy')
                 sta_to_tx_interface.difs = 0;
                 sta_to_tx_interface.state = STATE_DIFS;
             end
