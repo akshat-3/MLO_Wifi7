@@ -112,7 +112,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                     sta_to_tx_interface.state = STATE_TX;
 
                         %can this be optimised?
-                        for i = 1:sta_to_tx_interface.n_agg
+                        for i = 0:sta_to_tx_interface.n_agg
 
                             if isempty(sta_to_tx_interface.packet_level_details(i).time_tx1)
                                
