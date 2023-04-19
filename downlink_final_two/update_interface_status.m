@@ -183,7 +183,7 @@ function [interface, sta_to_tx_interface, occupancy_matrix] = update_interface_s
             
             if interface.sifs < (s_SIFS+s_BACK)
 
-                if (interface.sifs == s_SIFS && interface.is_collision == true) || (interface.tx_collision == true)
+                if (interface.sifs == s_SIFS) && (interface.is_collision == true || interface.tx_collision == true)
                     %unsuccessful tx
                     sta_to_tx_number = interface.q(1);
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats(interface, sta_to_tx_interface, sample_no);

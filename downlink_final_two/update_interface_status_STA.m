@@ -187,7 +187,7 @@ function [interface, sta_to_tx_interface,occupancy_matrix] = update_interface_st
         case STATE_SIFS
             %fprintf('\nsending')
             if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
-                if (sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true) || (sta_to_tx_interface.tx_collision == true)
+                if (sta_to_tx_interface.sifs == s_SIFS) && (sta_to_tx_interface.is_collision == true || sta_to_tx_interface.tx_collision == true)
                     %unsuccessful tx
                     %fprintf('\nunsuccessful tx')
                     %sta_to_tx_number = interface.q(1);
