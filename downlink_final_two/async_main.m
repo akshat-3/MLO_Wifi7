@@ -153,7 +153,7 @@ ap.interface_one.n_channel_access = 0;%n_first_channel_gains_access = 0;
 ap.interface_one.link_rate = 0;%link_one_data_rate = 0;
 ap.interface_one.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_one.contention_time = 0;
-ap.interface_one.ACK_received = 1;
+ap.interface_one.ACK_received = 0;
 
 %%AP INTERFACE 2
 %iterator
@@ -213,7 +213,7 @@ ap.interface_two.n_channel_access = 0;%n_first_channel_gains_access = 0;
 ap.interface_two.link_rate = 0;%link_one_data_rate = 0;
 ap.interface_two.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_two.contention_time = 0;
-ap.interface_two.ACK_received = 1;
+ap.interface_two.ACK_received = 0;
 
 sta = struct();
 
@@ -406,17 +406,11 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
         sta_no = ap.interface_one.q(1);
     end
    %UPDATE INTERFACE ONE STATE
-   if ap.interface_one.ACK_received == 1
-        fprintf(file,'\nAP receieved ACK on interface one');
-        ap.interface_one.ACK_received = 0;
-        [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
-   else
-     fprintf(file,'\nAP receieved no ACK on interface one');
-   end
-    if sta(sta_no).interface_one.sendMSG == 1
-        sta(sta_no).interface_one.sendMSG = 0;
-        fprintf(file,'\nSTA %d receieved message on interface one', sta_no);
-        [ap.interface_one, sta(sta_no).interface_one] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+ 
+    [ap.interface_one, sta(sta_no).interface_one] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+    %create a for loop to update all the sta's interface one state
+    for i = 1:n_sta
+        [ap.interface_one, sta(i).interface_one] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(i).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
     end
    %If interface is in BO/TX state, check which station it is trying to
    %transmit to 
@@ -425,21 +419,16 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
         sta_no = ap.interface_two.q(1);
     end 
    %UPDATE INTERFACE TWO STATE
-   if ap.interface_two.ACK_received == 1
-        fprintf(file,'\nAP receieved ACK on interface two');
-        ap.interface_two.ACK_received = 0;
-        [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
-   else
-     fprintf(file,'\nAP receieved no ACK');
-    end
-    if sta(sta_no).interface_two.sendMSG == 1 
-        sta(sta_no).interface_two.sendMSG = 0;
-        fprintf(file,'\nSTA %d receieved message on interface two', sta_no);
-        [ap.interface_two, sta(sta_no).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+   
+    [ap.interface_two, sta(sta_no).interface_two] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+    for i = 1:n_sta
+        [ap.interface_two, sta(i).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(i).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     end
     
-
-
+    fprintf(file, "%d bits", ap.interface_one.num_bits_sent);
+    fprintf(file, "%d bits", ap.interface_two.num_bits_sent);
+    fprintf(file, "%d bits", sta(sta_no).interface_one.num_bits_sent);
+    fprintf(file, "%d bits", sta(sta_no).interface_two.num_bits_sent);
    k = k+1;
    sample_no = sample_no + 1;
 
@@ -551,4 +540,3 @@ total_mlo_throughput = interface_one_mlo_throughput + interface_two_mlo_throughp
 time_taken = toc; 
 fprintf('This message is sent at time %s\n', datestr(now,'HH:MM:SS.FFF'));
 diary off;
-
