@@ -1,4 +1,4 @@
-function [interface, sta_to_tx_interface] = update_interface_status_STA(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
+function [interface, sta_to_tx_interface,occupancy_matrix] = update_interface_status_STA(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
  
 
     %%WIFI PARAMETERS 
@@ -140,6 +140,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
         case STATE_TX
             %fprintf('\ntrying to send')
+            occupancy_matrix(1, sta_to_tx_interface.primary_channel) = 1;
             %sta_to_tx_interface.no_of_tx_state_received = sta_to_tx_interface.no_of_tx_state_received + 1;
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
 
@@ -186,7 +187,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
         case STATE_SIFS
             %fprintf('\nsending')
             if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
-                if sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true
+                if (sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true) || (sta_to_tx_interface.tx_collision == true)
                     %unsuccessful tx
                     %fprintf('\nunsuccessful tx')
                     %sta_to_tx_number = interface.q(1);

@@ -1,4 +1,4 @@
-function [interface, sta_to_tx_interface] = update_interface_status(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
+function [interface, sta_to_tx_interface, occupancy_matrix] = update_interface_status(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
  
 
     %%WIFI PARAMETERS 
@@ -137,7 +137,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
 
         case STATE_TX
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
-                
+            occupancy_matrix(1, interface.primary_channel) = 1;
             power_interference = rssi_to_dBm(rssi(1, interface.primary_channel),3);
             distance_in_meter = 10;
             interface.count_below_snr = count_below_snr(interface.primary_channel, interface.bw, power_interference, MCS, distance_in_meter, interface.count_below_snr);
@@ -183,7 +183,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
             
             if interface.sifs < (s_SIFS+s_BACK)
 
-                if interface.sifs == s_SIFS && interface.is_collision == true
+                if (interface.sifs == s_SIFS && interface.is_collision == true) || (interface.tx_collision == true)
                     %unsuccessful tx
                     sta_to_tx_number = interface.q(1);
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats(interface, sta_to_tx_interface, sample_no);
