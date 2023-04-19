@@ -1,4 +1,4 @@
-function [interface, sta_to_tx_interface, occupancy_matrix] = update_interface_status(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
+function [interface, sta_to_tx_interface] = update_interface_status(interface, num_samples, sample_no, sta_to_tx_interface, rssi, occupancy_matrix, is_channel_bonding, occupancy_at_access)
  
 
     %%WIFI PARAMETERS 

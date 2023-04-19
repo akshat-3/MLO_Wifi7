@@ -378,26 +378,6 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
        fprintf("we are on sample no %d\n",s);
    end
 
-   count = 0;
-   %Update occupancy matrix based on TX State
-   if ap.interface_one.state == 3
-       occupancy_matrix(k, ap.interface_one.primary_channel) = 1;
-       count = count + 1;
-   end
-   if ap.interface_two.state == 3
-       occupancy_matrix(k, ap.interface_two.primary_channel) = 1;
-       count = count + 1;
-   end
-   for i = 1:n_sta
-       if sta(i).interface_one.state == 3
-           occupancy_matrix(k, sta(i).interface_one.primary_channel) = 1;
-           count = count + 1;
-       end
-       if sta(i).interface_two.state == 3
-           occupancy_matrix(k, sta(i).interface_two.primary_channel) = 1;
-           count = count + 1;
-       end
-   end
    %LOAD OCCUPANCY MATRIX 
    if rem(s, num_rssi_samples_per_iter) == 0
 
@@ -428,7 +408,26 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     if ap.interface_one.len_q > 0
         sta_no = ap.interface_one.q(1);
     end
-  
+    count = 0;
+    %Update occupancy matrix based on TX State
+    if ap.interface_one.state == 3
+        occupancy_matrix(k, ap.interface_one.primary_channel) = 1;
+        count = count + 1;
+    end
+    if ap.interface_two.state == 3
+        occupancy_matrix(k, ap.interface_two.primary_channel) = 1;
+        count = count + 1;
+    end
+    for i = 1:n_sta
+        if sta(i).interface_one.state == 3
+            occupancy_matrix(k, sta(i).interface_one.primary_channel) = 1;
+            count = count + 1;
+        end
+        if sta(i).interface_two.state == 3
+            occupancy_matrix(k, sta(i).interface_two.primary_channel) = 1;
+            count = count + 1;
+        end
+    end
 
     if count > 1
         fprintf("more than one channel is in tx state at sample no %d\n", s);
