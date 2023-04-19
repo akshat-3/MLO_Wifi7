@@ -424,11 +424,11 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     for i = 1:n_sta
         [ap.interface_two, sta(i).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(i).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     end
-    
+
     fprintf(file, "%d bits", ap.interface_one.num_bits_sent);
     fprintf(file, "%d bits", ap.interface_two.num_bits_sent);
-    fprintf(file, "%d bits", sta(sta_no).interface_one.num_bits_sent);
-    fprintf(file, "%d bits", sta(sta_no).interface_two.num_bits_sent);
+    fprintf(file, "%d bits", sta(sta_no).interface_one.num_data_bits_received);
+    fprintf(file, "%d bits", sta(sta_no).interface_two.num_data_bits_received);
    k = k+1;
    sample_no = sample_no + 1;
 
