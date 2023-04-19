@@ -139,7 +139,8 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             end
 
         case STATE_TX
-            fprintf('\ntrying to send')
+            %fprintf('\ntrying to send')
+            sta_to_tx_interface.no_of_tx_state_received = sta_to_tx_interface.no_of_tx_state_received + 1;
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
 
             power_interference = rssi_to_dBm(rssi(1, sta_to_tx_interface.primary_channel),3);
