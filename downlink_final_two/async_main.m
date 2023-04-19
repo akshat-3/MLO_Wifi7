@@ -281,7 +281,6 @@ for i = 1: n_sta
     len = 1;
     sta(i).interface_one.packet_level_details_iterator =  sta(i).interface_one.packet_level_details_iterator + 1;
     sta(i).interface_one.packet_level_details(len).interface_no = 1;
-    sta(i).interface_one.no_of_tx_state_received = 0;
     %interface2 stats
     sta(i).interface_two.state = -1; %state_interface2
     sta(i).interface_two.difs = 0;  % interface 2 DIFS counter
@@ -326,7 +325,6 @@ for i = 1: n_sta
     len = 1;
     sta(i).interface_two.packet_level_details_iterator =  sta(i).interface_two.packet_level_details_iterator + 1;
     sta(i).interface_two.packet_level_details(len).interface_no = 2;
-    sta(i).interface_two.no_of_tx_state_received = 0;
 end
 
 %this property should only be used for SLO stas. this tells which is the

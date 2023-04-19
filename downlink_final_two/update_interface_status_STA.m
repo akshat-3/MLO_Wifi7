@@ -104,7 +104,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                     sta_to_tx_interface.state = STATE_BO;
 
                 else
-                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    
                     %sta_to_tx_interface.bw = 1*20;
                     [sta_to_tx_interface] = get_tx_params_STA(sta_to_tx_interface, is_channel_bonding, occupancy_at_access);
                                 
@@ -140,7 +140,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
 
         case STATE_TX
             %fprintf('\ntrying to send')
-            sta_to_tx_interface.no_of_tx_state_received = sta_to_tx_interface.no_of_tx_state_received + 1;
+            %sta_to_tx_interface.no_of_tx_state_received = sta_to_tx_interface.no_of_tx_state_received + 1;
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
 
             power_interference = rssi_to_dBm(rssi(1, sta_to_tx_interface.primary_channel),3);
@@ -170,16 +170,16 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             %check if RTS/CTS frames transmitted correctly 
             %if not transmitted then go to SIFS
             %if RTS/CTS transmitted correctly then stay in TX
-            % if sta_to_tx_interface.tx == sta_to_tx_interface.s_DATA
-            %     sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_FULL_TX - sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
-            %     if sta_to_tx_interface.is_collision
-            %         fprintf('/nhelloo')
-            %         sta_to_tx_interface.state = STATE_SIFS;
-            %         sta_to_tx_interface.sifs = 0;
+            if sta_to_tx_interface.tx == sta_to_tx_interface.s_DATA
+                sta_to_tx_interface.is_collision = is_collision_caused_STA(sta_to_tx_interface.count_below_snr, sta_to_tx_interface.s_FULL_TX - sta_to_tx_interface.s_DATA, max_percent_failed_samples_allowed);
+                if sta_to_tx_interface.is_collision
+                    %fprintf('/nhelloo')
+                    sta_to_tx_interface.state = STATE_SIFS;
+                    sta_to_tx_interface.sifs = 0;
                     
-            %     end
-            %     sta_to_tx_interface.count_below_snr = 0;
-            % end
+                end
+                sta_to_tx_interface.count_below_snr = 0;
+            end
           
         case STATE_PIFS
 
