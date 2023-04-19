@@ -430,18 +430,22 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end
 
     if count > 1
-        fprintf("more than one channel is in tx state at sample no %d\n", s);
+        %fprintf("more than one channel is in tx state at sample no %d\n", s);
         if ap.interface_one.state == 3
+            fprintf("\nap interface one is in tx state at sample no %d\n", s);
             ap.interface_one.tx_collision = true;
         end
         if ap.interface_two.state == 3
+            fprintf("\nap interface two is in tx state at sample no %d\n", s);
             ap.interface_two.tx_collision = true;
         end
         for i = 1:n_sta
             if sta(i).interface_one.state == 3
+                fprintf("\nsta %d interface one is in tx state at sample no %d\n", i, s);
                 sta(i).interface_one.tx_collision = true;
             end
             if sta(i).interface_two.state == 3
+                fprintf("\nsta %d interface two is in tx state at sample no %d\n", i, s);
                 sta(i).interface_two.tx_collision = true;
             end
         end
