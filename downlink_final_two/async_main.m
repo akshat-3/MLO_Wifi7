@@ -425,10 +425,10 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     
     %UPDATE INTERFACE ONE STATE
  
-    [ap.interface_one, sta(sta_no).interface_one, occupancy_matrix[k,:]] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+    [ap.interface_one, sta(sta_no).interface_one, occupancy_matrix(k,:)] = update_interface_status(ap.interface_one, num_samples, sample_no, sta(sta_no).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
     %create a for loop to update all the sta's interface one state
     for i = 1:n_sta
-        [ap.interface_one, sta(i).interface_one, occupancy_matrix[k,:]] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(i).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
+        [ap.interface_one, sta(i).interface_one, occupancy_matrix(k,:)] = update_interface_status_STA(ap.interface_one, num_samples, sample_no, sta(i).interface_one, rssi_matrix(k, :), occupancy_matrix(k, :), false, occupancy_at_access);
     end
    %If interface is in BO/TX state, check which station it is trying to
    %transmit to 
@@ -438,9 +438,9 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end 
    %UPDATE INTERFACE TWO STATE
    
-    [ap.interface_two, sta(sta_no).interface_two, occupancy_matrix[k,:]] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+    [ap.interface_two, sta(sta_no).interface_two, occupancy_matrix(k,:)] = update_interface_status(ap.interface_two, num_samples, sample_no, sta(sta_no).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     for i = 1:n_sta
-        [ap.interface_two, sta(i).interface_two, occupancy_matrix[k,:]] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(i).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
+        [ap.interface_two, sta(i).interface_two, occupancy_matrix(k,:)] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(i).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     end
    k = k+1;
    sample_no = sample_no + 1;
