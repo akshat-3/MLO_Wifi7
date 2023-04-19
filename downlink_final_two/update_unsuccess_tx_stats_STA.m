@@ -8,6 +8,7 @@ function [ap_interface, sta_interface] = update_unsuccess_tx_stats(ap_interface,
         
     end
     sta_to_tx_interface.is_collision = false;
+    sta_to_tx_interface.tx_collision = false;
     ap_interface.ACK_received = -1;
     ap_interface.n_collision = ap_interface.n_collision + 1;
     sta_interface.n_collision = sta_interface.n_collision + 1;

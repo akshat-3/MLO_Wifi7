@@ -140,7 +140,7 @@ function [interface, sta_to_tx_interface,occupancy_matrix] = update_interface_st
 
         case STATE_TX
             %fprintf('\ntrying to send')
-            occupancy_matrix(1, sta_to_tx_interface.primary_channel) = 1;
+            %occupancy_matrix(1, sta_to_tx_interface.primary_channel) = 1;
             %sta_to_tx_interface.no_of_tx_state_received = sta_to_tx_interface.no_of_tx_state_received + 1;
             %node stays in this state for T_RTS+T_SIFS+T_CTS+T_SIFS+T_DATA
 
