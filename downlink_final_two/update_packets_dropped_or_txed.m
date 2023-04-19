@@ -12,7 +12,7 @@ function [interface, sta_to_tx_interface] = update_packets_dropped_or_txed(inter
             %packet will be removed from LMAC if it has to be dropped or if
             %it has been rxed
             if interface.packet_level_details(i).n_tx_attempts > n_MAX_TX_ATTEMPTS
-                fprintf("here\n");
+                %fprintf("here\n");
             end
             packets_to_remove_from_queue = packets_to_remove_from_queue + 1;
             if is_packet_drop

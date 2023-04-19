@@ -281,6 +281,7 @@ for i = 1: n_sta
     len = 1;
     sta(i).interface_one.packet_level_details_iterator =  sta(i).interface_one.packet_level_details_iterator + 1;
     sta(i).interface_one.packet_level_details(len).interface_no = 1;
+    sta(i).interface_one.no_of_tx_state_received = 0;
     %interface2 stats
     sta(i).interface_two.state = -1; %state_interface2
     sta(i).interface_two.difs = 0;  % interface 2 DIFS counter
@@ -325,6 +326,7 @@ for i = 1: n_sta
     len = 1;
     sta(i).interface_two.packet_level_details_iterator =  sta(i).interface_two.packet_level_details_iterator + 1;
     sta(i).interface_two.packet_level_details(len).interface_no = 2;
+    sta(i).interface_two.no_of_tx_state_received = 0;
 end
 
 %this property should only be used for SLO stas. this tells which is the
@@ -424,16 +426,16 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     for i = 1:n_sta
         [ap.interface_two, sta(i).interface_two] = update_interface_status_STA(ap.interface_two, num_samples, sample_no, sta(i).interface_two, rssi_matrix(k, :), occupancy_matrix(k, :), true, occupancy_at_access);
     end
-
-    if(mod(k,1000) == 0)
-        fprintf(file, "\n%d bits", ap.interface_one.num_data_bits_sent);
-        fprintf(file, "\n%d bits", ap.interface_two.num_data_bits_sent);
-        fprintf(file, "\n%d bits", sta(sta_no).interface_one.num_data_bits_received);
-        fprintf(file, "\n%d bits", sta(sta_no).interface_two.num_data_bits_received);
-    end
    k = k+1;
    sample_no = sample_no + 1;
 
+end
+
+fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
+fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
+for i = 1:n_sta
+    fprintf("\n %d sta(%d) i1 bits", sta(i).interface_one.num_data_bits_received,i);
+    fprintf("\n %d sta(%d) i2 bits", sta(i).interface_two.num_data_bits_received,i);
 end
 
 interface_one_time_ap_sent_first_packet = inf;

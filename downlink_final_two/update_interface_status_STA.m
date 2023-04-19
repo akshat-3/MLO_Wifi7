@@ -71,7 +71,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             % Idle sample
             if ~sample_busy
-                fprintf('\nnot busy')
+                %fprintf('\nnot busy')
                 if sta_to_tx_interface.difs < s_DIFS
 
                     sta_to_tx_interface.difs = sta_to_tx_interface.difs + 1;
@@ -88,13 +88,13 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 end
             % Busy sample
             else
-                fprintf('\nbusy')
+                %fprintf('\nbusy')
                 sta_to_tx_interface.difs = 0;
                 sta_to_tx_interface.state = STATE_DIFS;
             end
 
         case STATE_BO
-            fprintf('\nSTATE_BO')
+            %fprintf('\nSTATE_BO')
             sta_to_tx_interface.contention_time = sta_to_tx_interface.contention_time + 1; 
             %s1 = s1 + 1;
             if ~sample_busy % Idle sample
@@ -183,11 +183,11 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
         case STATE_PIFS
 
         case STATE_SIFS
-            fprintf('\nsending')
+            %fprintf('\nsending')
             if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
                 if sta_to_tx_interface.sifs == s_SIFS && sta_to_tx_interface.is_collision == true
                     %unsuccessful tx
-                    fprintf('\nunsuccessful tx')
+                    %fprintf('\nunsuccessful tx')
                     %sta_to_tx_number = interface.q(1);
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats_STA(interface, sta_to_tx_interface, sample_no);
                     
@@ -226,7 +226,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 
             else
                 %successful tx
-                fprintf('\nsuccessful tx')
+                %fprintf('\nsuccessful tx')
                 %update AP as well as STA stats
                 % sta_to_tx_number= sta_to_tx_interface.q(1);  
                 [interface, sta_to_tx_interface] = update_success_tx_stats_STA(interface, sta_to_tx_interface, L_D, sample_no);
