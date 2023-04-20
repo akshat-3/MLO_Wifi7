@@ -187,9 +187,9 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             %fprintf('\nsending')
             if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
                 if (sta_to_tx_interface.sifs == s_SIFS) && (sta_to_tx_interface.is_collision == true || sta_to_tx_interface.tx_collision == true)
-                    if sta_to_tx_interface.tx_collision == true
-                        fprintf('\nyoo')
-                    end
+                    %if sta_to_tx_interface.tx_collision == true
+                     %   fprintf('\nyoo')
+                    %end
                     %unsuccessful tx
                     %fprintf('\nunsuccessful tx')
                     %sta_to_tx_number = interface.q(1);
