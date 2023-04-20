@@ -162,7 +162,6 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 sta_to_tx_interface.count_below_snr = 0;
                 sta_to_tx_interface.state = STATE_SIFS;
                 sta_to_tx_interface.sifs = 0;
-                sta_to_tx_interface.is_collision = false;
             else
                 sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
             end
@@ -188,6 +187,9 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
             %fprintf('\nsending')
             if sta_to_tx_interface.sifs < (s_SIFS+s_BACK)
                 if (sta_to_tx_interface.sifs == s_SIFS) && (sta_to_tx_interface.is_collision == true || sta_to_tx_interface.tx_collision == true)
+                    if sta_to_tx_interface.tx_collision == true
+                        fprintf('\nyoo')
+                    end
                     %unsuccessful tx
                     %fprintf('\nunsuccessful tx')
                     %sta_to_tx_number = interface.q(1);
