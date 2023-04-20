@@ -504,8 +504,6 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end
 end
 
-end
-
 fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
 fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
 for i = 1:n_sta
