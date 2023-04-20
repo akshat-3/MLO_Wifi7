@@ -4,7 +4,7 @@ tic;
 file=fopen('uplink.txt','w');
 %get occupancy matrix and rssi matrix
 %remember to change offset on get occupancy matrix by piece
-num_iterations = 100; % max value 2001 %800
+num_iterations = 200; % max value 2001 %800
 num_rssi_samples_per_iter = 10000;%100000
 NUM_RFs = 24; 
 peak_threshold = 150; %in WACA code  its 150. for testing purpose taking it as 50
@@ -408,6 +408,7 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     if ap.interface_one.len_q > 0
         sta_no = ap.interface_one.q(1);
     end
+    
     count = 0;
     %Update occupancy matrix based on TX State
     if ap.interface_one.state == 3
@@ -432,20 +433,20 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     if count > 1
         %fprintf("more than one channel is in tx state at sample no %d\n", s);
         if ap.interface_one.state == 3
-            fprintf("\nap interface one is in tx state at sample no %d\n", s);
+            %fprintf("\nap interface one is in tx state at sample no %d\n", s);
             ap.interface_one.tx_collision = true;
         end
         if ap.interface_two.state == 3
-            fprintf("\nap interface two is in tx state at sample no %d\n", s);
+            %fprintf("\nap interface two is in tx state at sample no %d\n", s);
             ap.interface_two.tx_collision = true;
         end
         for i = 1:n_sta
             if sta(i).interface_one.state == 3
-                fprintf("\nsta %d interface one is in tx state at sample no %d\n", i, s);
+               %fprintf("\nsta %d interface one is in tx state at sample no %d\n", i, s);
                 sta(i).interface_one.tx_collision = true;
             end
             if sta(i).interface_two.state == 3
-                fprintf("\nsta %d interface two is in tx state at sample no %d\n", i, s);
+                %fprintf("\nsta %d interface two is in tx state at sample no %d\n", i, s);
                 sta(i).interface_two.tx_collision = true;
             end
         end
@@ -486,17 +487,20 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end
    k = k+1;
    sample_no = sample_no + 1;
+    if mod(k,1000) == 0
+        fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
+        fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
+        for i = 1:n_sta
+            fprintf("\n %d sta(%d) i1 bits", sta(i).interface_one.num_data_bits_received,i);
+            fprintf("\n %d sta(%d) i2 bits", sta(i).interface_two.num_data_bits_received,i);
+            fprintf("\n %d no of times sta i1 %d was in tx", sta(i).interface_one.n_successful_tx, i);
+            fprintf("\n %d no of times sta i2 %d was in tx", sta(i).interface_two.n_successful_tx, i);
+    end
+end
 
 end
 
-fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
-fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
-for i = 1:n_sta
-    fprintf("\n %d sta(%d) i1 bits", sta(i).interface_one.num_data_bits_received,i);
-    fprintf("\n %d sta(%d) i2 bits", sta(i).interface_two.num_data_bits_received,i);
-    fprintf("\n %d no of times sta i1 %d was in tx", sta(i).interface_one.n_successful_tx, i);
-    fprintf("\n %d no of times sta i2 %d was in tx", sta(i).interface_two.n_successful_tx, i);
-end
+
 
 interface_one_time_ap_sent_first_packet = inf;
 interface_one_time_ap_sent_last_packet = -inf;
