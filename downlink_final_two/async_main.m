@@ -23,7 +23,7 @@ num_samples = num_iterations * num_rssi_samples_per_iter;
 global T_SAMPLE;
 T_SAMPLE = 10*1E-6;
 
-n_sta = 10; %CHANGE IN MULTI LINK
+n_sta = 2; %CHANGE IN MULTI LINK
 n_apps = 6;
 n_mlo_sta = 6;
 n_slo_sta_interface_one = 3;
@@ -429,7 +429,7 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
             count = count + 1;
         end
     end
-    
+
     if count > 1
         %fprintf("more than one channel is in tx state at sample no %d\n", s);
         if ap.interface_one.state == 3
