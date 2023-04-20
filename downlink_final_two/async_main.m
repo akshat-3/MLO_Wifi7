@@ -23,7 +23,7 @@ num_samples = num_iterations * num_rssi_samples_per_iter;
 global T_SAMPLE;
 T_SAMPLE = 10*1E-6;
 
-n_sta = 2; %CHANGE IN MULTI LINK
+n_sta = 3; %CHANGE IN MULTI LINK
 n_apps = 6;
 n_mlo_sta = 6;
 n_slo_sta_interface_one = 3;
