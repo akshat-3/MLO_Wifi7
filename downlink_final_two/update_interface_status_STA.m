@@ -208,7 +208,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                         % else
                         %     sta_to_tx_interface.state = STATE_IDLE;
                         % end
-                        fprintf('\nfailed')
+                        %fprintf('\nfailed')
                         sta_to_tx_interface.state = STATE_DIFS;
 
                         sta_to_tx_interface.CW = CW;
