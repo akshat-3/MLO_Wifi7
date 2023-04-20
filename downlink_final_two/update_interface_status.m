@@ -189,7 +189,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                     [interface, sta_to_tx_interface] = update_unsuccess_tx_stats(interface, sta_to_tx_interface, sample_no);
                     
                     if interface.packet_level_details(1).n_tx_attempts == n_MAX_TX_ATTEMPTS
-                        fprintf('\nfailed')
+                        fprintf('\nfailed at AP')
 
                         %remove packets from q and update packet latency
                         is_packet_drop = true;
