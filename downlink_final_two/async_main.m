@@ -492,6 +492,17 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end
    k = k+1;
    sample_no = sample_no + 1;
+   if mod(k,10000)
+        fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
+        fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
+        for i = 1:n_sta
+            fprintf("\n %d sta(%d) i1 bits", sta(i).interface_one.num_data_bits_received,i);
+            fprintf("\n %d sta(%d) i2 bits", sta(i).interface_two.num_data_bits_received,i);
+            fprintf("\n %d no of times sta i1 %d was in tx", sta(i).interface_one.n_successful_tx, i);
+            fprintf("\n %d no of times sta i2 %d was in tx", sta(i).interface_two.n_successful_tx, i);
+        end
+    end
+end
 
 end
 
