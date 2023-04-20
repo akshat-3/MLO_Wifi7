@@ -28,7 +28,7 @@ for i = 1: (n_sta * n_apps)
     sta_no = (fix((idx_before_sort(i)-1)/n_apps))+1;
     app_no = rem(idx_before_sort(i), n_apps);
     
-    fprintf("sta_no is: %d app_no is: %d\n", sta_no, app_no)
+
     if app_no == 0
         app_no = n_apps;
     end

@@ -103,7 +103,7 @@ ap.interface_one.bw = 0;
 ap.interface_one.count_below_snr = 0;
  
 %l_mac queue
-ap.interface_one.sta_packet_map = zeros(1, 1);  
+ap.interface_one.sta_packet_map = zeros(n_sta, 1);  
 ap.interface_one.q = zeros(1);
 ap.interface_one.len_q = 0;
 %lmac mlo flow details
