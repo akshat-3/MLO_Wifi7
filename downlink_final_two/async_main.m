@@ -156,6 +156,7 @@ ap.interface_one.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_one.contention_time = 0;
 ap.interface_one.ACK_received = 0;
 ap.interface_one.tx_collision = false;
+ap_interface_one.not_ACKED = 0;
 %%AP INTERFACE 2
 %iterator
 ap.interface_two.unACKed = zeros(1, n_sta);
@@ -173,6 +174,7 @@ ap.interface_two.CW = 16;
 ap.interface_two.current_rx_sta = -1;
 ap.interface_two.bw  = 0;
 ap.interface_two.count_below_snr = 0;
+ap.interface_two.not_ACKED = 0;
 
 %l_mac queue
 ap.interface_two.sta_packet_map = zeros(n_sta, 1); %size needs to be corrected

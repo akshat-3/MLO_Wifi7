@@ -9,6 +9,7 @@ function  [ap_interface, current_tx_sta_interface ] = update_success_tx_stats(ap
     ap_interface.num_data_bits_sent = ap_interface.num_data_bits_sent + ap_interface.n_agg * L_D;
     ap_interface.num_pkt_sent = ap_interface.num_pkt_sent + ap_interface.n_agg;
     ap_interface.unACKed(current_tx_sta_interface.number) = ap_interface.n_agg;
+    ap_interface.not_ACKED = ap_interface.not_ACKED + ap_interface.n_agg;
     
     if current_tx_sta_interface.time_first_packet_tx == -1
 
