@@ -87,6 +87,7 @@ ap.association_end = sta_association_end; %dummy variable created only to keep a
 
 %%AP INTERFACE 1
 %iterator
+ap.interface_one.unACKed = zeros(1, n_sta);
 ap.interface_one.i = 0; %index of last packet in m1's queue 
 ap.interface_one.difs = 0;  % interface 1 DIFS counter
 ap.interface_one.bo = 0;  % interface 1 BO counter
@@ -157,6 +158,7 @@ ap.interface_one.ACK_received = 0;
 ap.interface_one.tx_collision = false;
 %%AP INTERFACE 2
 %iterator
+ap.interface_two.unACKed = zeros(1, n_sta);
 ap.interface_two.i = 0; %index of last packet in m1's queue 
 ap.interface_two.difs = 0;  % interface 1 DIFS counter
 ap.interface_two.bo = 0;  % interface 1 BO counter
@@ -239,6 +241,8 @@ for i = 1: n_sta
     %sta(i).time_last_packet_rx = -1;
     
     %interface1 stats
+    sta(i).interface_one.number = i;
+    sta(i).interface_one.packets_received = 0;
     sta(i).interface_one.state = -1; %state_interface1
     sta(i).interface_one.difs = 0;  % interface 1 DIFS counter
     sta(i).interface_one.bo = 0;  % interface 1 BO counter
@@ -284,6 +288,8 @@ for i = 1: n_sta
     sta(i).interface_one.packet_level_details(len).interface_no = 1;
     sta(i).interface_one.tx_collision = false;
     %interface2 stats
+    sta(i).interface_two.number = i;
+    sta(i).interface_two.packets_received = 0;
     sta(i).interface_two.state = -1; %state_interface2
     sta(i).interface_two.difs = 0;  % interface 2 DIFS counter
     sta(i).interface_two.bo = 0; %backoff counter
