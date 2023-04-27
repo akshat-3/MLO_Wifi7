@@ -156,7 +156,7 @@ ap.interface_one.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_one.contention_time = 0;
 ap.interface_one.ACK_received = 0;
 ap.interface_one.tx_collision = false;
-ap_interface_one.not_ACKED = 0;
+ap.interface_one.not_ACKED = 0;
 %%AP INTERFACE 2
 %iterator
 ap.interface_two.unACKed = zeros(1, n_sta);
