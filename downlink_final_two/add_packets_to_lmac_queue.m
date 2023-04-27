@@ -14,7 +14,7 @@ function [umac, interface, interface_lmac, sta_interface] = add_packets_to_lmac_
     %UMAC CALCULATIONS
     %Note: packets_to_add no of packets generated at start_time as well
     samples_to_wait_before_allocating_q = umac.flow_details(flow_num).samples_to_wait_before_allocating_q; %app specific
-    packets_to_add = umac.flow_details(flow_num).packets_to_add_in_q; %app specific
+    packets_to_add = umac.flow_details(flow_num).packets_to_add_in_q + interface.unACKed(sta_no); %app specific
     packets_which_should_be_avail_at_curr_sample = (fix((sample_no-start_time)/samples_to_wait_before_allocating_q) + start_time)*packets_to_add; %6/5 = 1.2 fix(6/5)=1 fix strips decimal digits
     packets_used =  umac.flow_details(flow_num).packets_used;
     packets_available_at_curr_sample = packets_which_should_be_avail_at_curr_sample - packets_used;
