@@ -42,8 +42,8 @@ function [interface] = get_tx_params(interface, is_bonding, occupancy_at_access)
         
     end
 
-    %[packets_to_tx, interface] = get_packets_to_tx(interface, search_space_lmac);
-    packets_to_tx = 1;
+    [packets_to_tx, interface] = get_packets_to_tx_STA(interface);
+    %packets_to_tx = 1;
     N_agg_max = packets_to_tx; %no of ones in q1. it should be minimum of i1 and limit(64)
     [interface.s_FULL_TX, interface.s_DATA, interface.n_agg] = find_max_pkts_aggregated(N_agg_max, bw, s_TXOP_FULL_TX, s_OVERHEAD, MCS, L_D);   
     

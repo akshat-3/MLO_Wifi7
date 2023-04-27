@@ -14,6 +14,7 @@ function  [ap_interface, current_tx_sta_interface ] = update_success_tx_stats_ST
     %     current_tx_sta_interface.time_first_packet_tx = sample_no - ap_interface.s_DATA - s_SIFS - s_BACK;
     % end
     ap_interface.ACK_received = 1;
+    ap_interface.unACKed(current_tx_sta_interface.number) = 0;
     % current_tx_sta_interface.time_last_packet_rx = sample_no;
     % current_tx_sta_interface.num_samples_in_tx = current_tx_sta_interface.num_samples_in_tx + ap_interface.s_FULL_TX;
     % current_tx_sta_interface.num_samples_in_tx_success = current_tx_sta_interface.num_samples_in_tx_success + ap_interface.s_FULL_TX;

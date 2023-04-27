@@ -102,7 +102,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
 
                 else
                   
-                    [interface] = get_tx_params(interface, is_channel_bonding, occupancy_at_access);
+                    [interface] = get_tx_params(interface, is_channel_bonding, occupancy_at_access,sta_to_tx_interface.number);
                                 
                     if(sample_no+interface.s_FULL_TX <= num_samples) %changed s1 to s
                         
@@ -144,7 +144,6 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
 
             if interface.tx == 0
                 
-             
                 interface.tx = interface.s_FULL_TX;
                 interface.tx = interface.tx - 1; %transmit
                 interface.n_channel_access = interface.n_channel_access + 1;
@@ -156,6 +155,8 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                 interface.count_below_snr = 0;
                 interface.state = STATE_SIFS;
                 interface.sifs = 0;
+                %[interface,sta_to_tx_interface] = did_STA_receive_packet(interface, sta_to_tx_interface);
+
 
             else
                 interface.tx = interface.tx - 1; %transmit
@@ -171,6 +172,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
                     
                     interface.state = STATE_SIFS;
                     interface.sifs = 0;
+                    %[interface,sta_to_tx_interface] = did_STA_receive_packet(interface, sta_to_tx_interface);
                     
                 end
                 interface.count_below_snr = 0;
