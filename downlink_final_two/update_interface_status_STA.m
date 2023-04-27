@@ -63,7 +63,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
            
             % %s1 = s1 + 1;
             % if (interface.len_q) ~= 0 %packet in q`
-            if sta_to_tx_interface.packets_received > 0
+            if sta_to_tx_interface.packets_received > 0 %for this transmission
                 sta_to_tx_interface.state = STATE_DIFS;
             end
         
@@ -163,6 +163,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
                 sta_to_tx_interface.count_below_snr = 0;
                 sta_to_tx_interface.state = STATE_SIFS;
                 sta_to_tx_interface.sifs = 0;
+                
             else
                 sta_to_tx_interface.tx = sta_to_tx_interface.tx - 1; %transmit
             end
