@@ -481,7 +481,7 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
 
     if count1 == 1 && ap.interface_one.state == 3
         for i = 1:n_sta
-            if sta(i).interface_one.state == 3 && ~(sta(i).interface_one.state == 5)
+            if ~(sta(i).interface_one.state == 3) && ~(sta(i).interface_one.state == 5)
                 sta(i).interface_one.previous_state = sta(i).interface_one.state;
                 sta(i).interface_one.state = 5;
             end
@@ -490,7 +490,7 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
 
     if count2 == 1 && ap.interface_two.state == 3
         for i = 1:n_sta
-            if sta(i).interface_two.state == 3 && ~(sta(i).interface_two.state == 5)
+            if ~(sta(i).interface_two.state == 3) && ~(sta(i).interface_two.state == 5)
                 sta(i).interface_two.previous_state = sta(i).interface_two.state;
                 sta(i).interface_two.state = 5;
             end
