@@ -51,6 +51,7 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
     STATE_PIFS = 2;
     STATE_TX = 3;
     STATE_SIFS = 4;
+    STATE_RECEIVE = 5;
 
     max_percent_failed_samples_allowed = 20; %in one tx if %failed samples are above this percentage the collision. failed sample => snr threshold falls below threshold
 
@@ -59,6 +60,9 @@ function [interface, sta_to_tx_interface] = update_interface_status(interface, n
             
     switch interface.state
 
+        case STATE_RECEIVE
+            continue
+        
         case STATE_IDLE
            
             %s1 = s1 + 1;

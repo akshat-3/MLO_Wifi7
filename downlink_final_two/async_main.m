@@ -157,6 +157,7 @@ ap.interface_one.contention_time = 0;
 ap.interface_one.ACK_received = 0;
 ap.interface_one.tx_collision = false;
 ap.interface_one.not_ACKED = 0;
+ap.interface_one.previous_state = -1;
 %%AP INTERFACE 2
 %iterator
 ap.interface_two.unACKed = zeros(1, n_sta);
@@ -219,7 +220,7 @@ ap.interface_two.retransmit = zeros(1, 2); %num packets, sample no
 ap.interface_two.contention_time = 0;
 ap.interface_two.ACK_received = 0;
 ap.interface_two.tx_collision = false;
-
+ap_interface_two.previous_state = -1;
 sta = struct();
 
 %initialize STA
@@ -289,6 +290,7 @@ for i = 1: n_sta
     sta(i).interface_one.packet_level_details_iterator =  sta(i).interface_one.packet_level_details_iterator + 1;
     sta(i).interface_one.packet_level_details(len).interface_no = 1;
     sta(i).interface_one.tx_collision = false;
+    sta(i).interface_one.previous_state = -1;
     %interface2 stats
     sta(i).interface_two.number = i;
     sta(i).interface_two.packets_received = 0;
@@ -336,6 +338,7 @@ for i = 1: n_sta
     sta(i).interface_two.packet_level_details_iterator =  sta(i).interface_two.packet_level_details_iterator + 1;
     sta(i).interface_two.packet_level_details(len).interface_no = 2;
     sta(i).interface_two.tx_collision = false;
+    sta(i).interface_two.previous_state = -1;
 end
 
 %this property should only be used for SLO stas. this tells which is the
@@ -424,10 +427,12 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
         occupancy_matrix(k, ap.interface_one.primary_channel) = 1;
         count1 = count1 + 1;
     end
+    
     if ap.interface_two.state == 3
         occupancy_matrix(k, ap.interface_two.primary_channel) = 1;
         count2 = count2 + 1;
     end
+
     for i = 1:n_sta
         if sta(i).interface_one.state == 3
             occupancy_matrix(k, sta(i).interface_one.primary_channel) = 1;
@@ -462,6 +467,42 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
                 sta(i).interface_two.tx_collision = true;
             end
         end
+    end
+
+    if count1 == 1 && ~(ap.interface_one.state == 3)
+        ap.interface_one.previous_state = ap.interface_one.state;
+        ap.interface_one.state = 5;
+    end
+
+    if count2 == 1 && ~(ap.interface_two.state == 3)
+        ap.interface_two.previous_state = ap.interface_two.state;
+        ap.interface_two.state = 5;
+    end
+
+    if count1 == 1 && ap.interface_one.state == 3
+        for i = 1:n_sta
+            if sta(i).interface_one.state == 3
+                sta(i).interface_one.previous_state = sta(i).interface_one.state;
+                sta(i).interface_one.state = 5;
+            end
+        end
+    end
+
+    if count2 == 1 && ap.interface_two.state == 3
+        for i = 1:n_sta
+            if sta(i).interface_two.state == 3
+                sta(i).interface_two.previous_state = sta(i).interface_two.state;
+                sta(i).interface_two.state = 5;
+            end
+        end
+    end
+
+    if count1 == 0 && ap.interface_one.state == 5
+        ap.interface_one.state = ap.interface_one.previous_state;
+    end
+
+    if count2 == 0 && ap.interface_two.state == 5
+        ap.interface_two.state = ap.interface_two.previous_state;
     end
 
     % if ap.interface_one.state == 3
