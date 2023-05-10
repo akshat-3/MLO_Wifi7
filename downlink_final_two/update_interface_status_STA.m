@@ -61,7 +61,6 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
     switch sta_to_tx_interface.state
 
         case STATE_RECEIVE
-            continue
         
         case STATE_IDLE
            
