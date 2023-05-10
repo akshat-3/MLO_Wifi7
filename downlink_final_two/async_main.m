@@ -480,29 +480,17 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end
 
     if count1 == 1 && ap.interface_one.state == 3
-        for i = 1:n_sta
-            if ~(sta(i).interface_one.state == 3) && ~(sta(i).interface_one.state == 5)
-                sta(i).interface_one.previous_state = sta(i).interface_one.state;
-                sta(i).interface_one.state = 5;
-            end
+        if ~(sta(sta_no).interface_one.state == 3) && ~(sta(sta_no).interface_one.state == 5)
+            sta(sta_no).interface_one.previous_state = sta(sta_no).interface_one.state;
+            sta(sta_no).interface_one.state = 5;
         end
     end
 
     if count2 == 1 && ap.interface_two.state == 3
-        for i = 1:n_sta
-            if ~(sta(i).interface_two.state == 3) && ~(sta(i).interface_two.state == 5)
-                sta(i).interface_two.previous_state = sta(i).interface_two.state;
-                sta(i).interface_two.state = 5;
-            end
+        if ~(sta(sta_no).interface_two.state == 3) && ~(sta(sta_no).interface_two.state == 5)
+            sta(sta_no).interface_two.previous_state = sta(sta_no).interface_two.state;
+            sta(sta_no).interface_two.state = 5;
         end
-    end
-
-    if count1 == 0 && ap.interface_one.state == 5
-        ap.interface_one.state = ap.interface_one.previous_state;
-    end
-
-    if count2 == 0 && ap.interface_two.state == 5
-        ap.interface_two.state = ap.interface_two.previous_state;
     end
 
     % if ap.interface_one.state == 3

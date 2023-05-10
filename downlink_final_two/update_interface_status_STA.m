@@ -61,7 +61,7 @@ function [interface, sta_to_tx_interface] = update_interface_status_STA(interfac
     switch sta_to_tx_interface.state
 
         case STATE_RECEIVE
-        
+            sta_to_tx_interface.state = sta_to_tx_interface.previous_state;
         case STATE_IDLE
            
             % %s1 = s1 + 1;
