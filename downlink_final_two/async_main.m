@@ -158,6 +158,7 @@ ap.interface_one.ACK_received = 0;
 ap.interface_one.tx_collision = false;
 ap.interface_one.not_ACKED = 0;
 ap.interface_one.previous_state = -1;
+ap_interface_one.num_pkts_retransmitted = 0;
 %%AP INTERFACE 2
 %iterator
 ap.interface_two.unACKed = zeros(1, n_sta);
@@ -221,6 +222,7 @@ ap.interface_two.contention_time = 0;
 ap.interface_two.ACK_received = 0;
 ap.interface_two.tx_collision = false;
 ap_interface_two.previous_state = -1;
+ap_interface_two.num_pkts_retransmitted = 0;
 sta = struct();
 
 %initialize STA
@@ -291,6 +293,7 @@ for i = 1: n_sta
     sta(i).interface_one.packet_level_details(len).interface_no = 1;
     sta(i).interface_one.tx_collision = false;
     sta(i).interface_one.previous_state = -1;
+    sta(i).interface_one.num_data_bits_sent = 0;
     %interface2 stats
     sta(i).interface_two.number = i;
     sta(i).interface_two.packets_received = 0;
@@ -339,6 +342,7 @@ for i = 1: n_sta
     sta(i).interface_two.packet_level_details(len).interface_no = 2;
     sta(i).interface_two.tx_collision = false;
     sta(i).interface_two.previous_state = -1;
+    sta(i).interface_two.num_data_bits_sent = 0;
 end
 
 %this property should only be used for SLO stas. this tells which is the
@@ -529,26 +533,8 @@ for s=(historical_samples_req+1):num_samples   %the iterator s accounts for hist
     end
    k = k+1;
    sample_no = sample_no + 1;
-   if mod(k,10000) == 0
-        fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
-        fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
-        for i = 1:n_sta
-            fprintf("\n %d sta(%d) i1 bits", sta(i).interface_one.num_data_bits_received,i);
-            fprintf("\n %d sta(%d) i2 bits", sta(i).interface_two.num_data_bits_received,i);
-            fprintf("\n %d no of times sta i1 %d was in tx", sta(i).interface_one.n_successful_tx, i);
-            fprintf("\n %d no of times sta i2 %d was in tx", sta(i).interface_two.n_successful_tx, i);
-        end
-    end
 end
 
-fprintf("\n %d ap i1 bits", ap.interface_one.num_data_bits_sent);
-fprintf("\n %d ap i2 bits", ap.interface_two.num_data_bits_sent);
-for i = 1:n_sta
-    fprintf("\n %d sta(%d) i1 bits", sta(i).interface_one.num_data_bits_received,i);
-    fprintf("\n %d sta(%d) i2 bits", sta(i).interface_two.num_data_bits_received,i);
-    fprintf("\n %d no of times sta i1 %d was in tx", sta(i).interface_one.n_successful_tx, i);
-    fprintf("\n %d no of times sta i2 %d was in tx", sta(i).interface_two.n_successful_tx, i);
-end
 
 interface_one_time_ap_sent_first_packet = inf;
 interface_one_time_ap_sent_last_packet = -inf;

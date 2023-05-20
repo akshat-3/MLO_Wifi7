@@ -20,6 +20,6 @@ function  [ap_interface, current_tx_sta_interface ] = update_success_tx_stats(ap
     current_tx_sta_interface.num_samples_in_tx = current_tx_sta_interface.num_samples_in_tx + ap_interface.s_FULL_TX;
     current_tx_sta_interface.num_samples_in_tx_success = current_tx_sta_interface.num_samples_in_tx_success + ap_interface.s_FULL_TX;
     %current_tx_sta_interface.n_successful_tx = current_tx_sta_interface.n_successful_tx + 1;
-    %current_tx_sta_interface.num_data_bits_received = current_tx_sta_interface.num_data_bits_received + ap_interface.n_agg * L_D;
+    current_tx_sta_interface.num_data_bits_received = current_tx_sta_interface.num_data_bits_received + ap_interface.n_agg * L_D;
     current_tx_sta_interface.num_pkts_received = current_tx_sta_interface.num_pkts_received + ap_interface.n_agg;
 end
