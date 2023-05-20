@@ -86,6 +86,9 @@ ap.association_end = sta_association_end; %dummy variable created only to keep a
 %transmitted. 
 
 %%AP INTERFACE 1
+%----
+ap_interface_one.num_pkts_retransmitted = 0;
+%---
 %iterator
 ap.interface_one.unACKed = zeros(1, n_sta);
 ap.interface_one.i = 0; %index of last packet in m1's queue 
@@ -158,8 +161,10 @@ ap.interface_one.ACK_received = 0;
 ap.interface_one.tx_collision = false;
 ap.interface_one.not_ACKED = 0;
 ap.interface_one.previous_state = -1;
-ap_interface_one.num_pkts_retransmitted = 0;
 %%AP INTERFACE 2
+%----
+ap_interface_two.num_pkts_retransmitted = 0;
+%---
 %iterator
 ap.interface_two.unACKed = zeros(1, n_sta);
 ap.interface_two.i = 0; %index of last packet in m1's queue 
@@ -222,7 +227,6 @@ ap.interface_two.contention_time = 0;
 ap.interface_two.ACK_received = 0;
 ap.interface_two.tx_collision = false;
 ap_interface_two.previous_state = -1;
-ap_interface_two.num_pkts_retransmitted = 0;
 sta = struct();
 
 %initialize STA
