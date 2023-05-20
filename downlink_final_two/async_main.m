@@ -87,7 +87,7 @@ ap.association_end = sta_association_end; %dummy variable created only to keep a
 
 %%AP INTERFACE 1
 %----
-ap.interface_one.num_pkts_retransmitted = 0;
+%ap.interface_one.num_pkts_retransmitted = 0;
 %---
 %iterator
 ap.interface_one.unACKed = zeros(1, n_sta);
@@ -163,7 +163,7 @@ ap.interface_one.not_ACKED = 0;
 ap.interface_one.previous_state = -1;
 %%AP INTERFACE 2
 %----
-ap.interface_two.num_pkts_retransmitted = 0;
+%ap.interface_two.num_pkts_retransmitted = 0;
 %---
 %iterator
 ap.interface_two.unACKed = zeros(1, n_sta);
